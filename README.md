@@ -57,13 +57,11 @@ The daemon runs as a systemd service (`proton-vpn-daemon`). Use the CLI after si
 ```bash
 protonvpn signin              # sign in with Proton account
 protonvpn connect             # connect to fastest server
-protonvpn connect -cc US      # connect to specific country
+protonvpn connect --country US  # connect to specific country
 protonvpn disconnect
 protonvpn status
 protonvpn servers             # list available servers
 ```
-
-Or use the GUI: `proton-vpn-gtk-app`.
 
 ## Theme
 
@@ -86,5 +84,4 @@ Or use the GUI: `proton-vpn-gtk-app`.
 | `vscodium` | Code editor |
 | `flatpak` | Sandboxed app runtime |
 | `ollama` | Local LLM runner (CUDA) |
-| `proton-vpn-gtk-app` | ProtonVPN GUI |
 | `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
