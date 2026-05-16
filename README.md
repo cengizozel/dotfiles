@@ -31,6 +31,11 @@ cd ~/dotfiles && git pull
 
 - `hypr/` — Hyprland window manager configuration and scripts
 - `waybar/` — Waybar status bar configuration and styles
+- `kitty/` — Kitty terminal configuration
 - `nvim/` — Neovim configuration (LazyVim)
 - `claude/` — Claude Code settings
 - `install.sh` — Bootstrap script for fresh installs
+
+## Theme
+
+[Tokyo Night](https://github.com/folke/tokyonight.nvim) across all components. Font: [Hack Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts).
