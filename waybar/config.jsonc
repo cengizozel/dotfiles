@@ -1,0 +1,52 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 4,
+
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery"],
+
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "on-click": "activate"
+    },
+
+    "clock": {
+        "format": "{:%a %b %d  %I:%M %p}",
+        "tooltip": false
+    },
+
+    "cpu": {
+        "format": "cpu {usage}%",
+        "interval": 2
+    },
+
+    "memory": {
+        "format": "mem {}%",
+        "interval": 2
+    },
+
+    "network": {
+        "format-wifi": "{essid} {signalStrength}%",
+        "format-ethernet": "eth",
+        "format-disconnected": "offline"
+    },
+
+    "pulseaudio": {
+        "format": "vol {volume}%",
+        "format-muted": "muted",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    },
+
+    "battery": {
+        "format": "bat {capacity}%",
+        "format-charging": "chr {capacity}%",
+        "format-full": "full",
+        "states": {
+            "warning": 30,
+            "critical": 15
+        }
+    }
+}
