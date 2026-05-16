@@ -1,29 +1,29 @@
 * {
-    font-family: monospace;
+    font-family: "HackNFM", monospace;
     font-size: 13px;
     min-height: 0;
 }
 
 window#waybar {
-    background: #1e1e2e;
-    color: #cdd6f4;
-    border-bottom: 2px solid #313244;
+    background: #1a1b26;
+    color: #a9b1d6;
+    border-bottom: 2px solid #292e42;
 }
 
 #workspaces button {
     padding: 0 8px;
-    color: #6c7086;
+    color: #565f89;
     border-radius: 0;
 }
 
 #workspaces button.active {
-    color: #89b4fa;
-    border-bottom: 2px solid #89b4fa;
+    color: #7aa2f7;
+    border-bottom: 2px solid #7aa2f7;
 }
 
 #workspaces button:hover {
-    color: #cdd6f4;
-    background: #313244;
+    color: #a9b1d6;
+    background: #292e42;
 }
 
 #clock,
@@ -33,17 +33,17 @@ window#waybar {
 #pulseaudio,
 #battery {
     padding: 0 12px;
-    color: #cdd6f4;
+    color: #a9b1d6;
 }
 
 #clock {
-    color: #89b4fa;
+    color: #7aa2f7;
 }
 
 #battery.warning {
-    color: #f9e2af;
+    color: #e0af68;
 }
 
 #battery.critical {
-    color: #f38ba8;
+    color: #f7768e;
 }
