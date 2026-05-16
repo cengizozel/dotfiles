@@ -39,8 +39,24 @@ cd ~/dotfiles && git pull
 | `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
 | `nvim/` | `~/.config/nvim/` |
 | `claude/settings.json` | `~/.claude/settings.json` |
+| `vscodium/settings.json` | `~/.config/VSCodium/User/settings.json` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `install.sh` | — bootstrap script for fresh installs |
+
+## ProtonVPN
+
+The daemon runs as a systemd service (`proton-vpn-daemon`). Use the CLI after signing in once:
+
+```bash
+protonvpn signin              # sign in with Proton account
+protonvpn connect             # connect to fastest server
+protonvpn connect -cc US      # connect to specific country
+protonvpn disconnect
+protonvpn status
+protonvpn servers             # list available servers
+```
+
+Or use the GUI: `proton-vpn-gtk-app`.
 
 ## Theme
 
@@ -59,3 +75,9 @@ cd ~/dotfiles && git pull
 | `noisetorch` | Microphone noise suppression |
 | `dolphin` | File manager (`Super+E`) |
 | `librewolf` | Browser (`Super+B`) |
+| `discord` | Chat / voice |
+| `vscodium` | Code editor |
+| `flatpak` | Sandboxed app runtime |
+| `ollama` | Local LLM runner (CUDA) |
+| `proton-vpn-gtk-app` | ProtonVPN GUI |
+| `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
