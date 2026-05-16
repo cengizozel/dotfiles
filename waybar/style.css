@@ -1,7 +1,7 @@
 @import "colors/colors.css";
 
 * {
-    font-family: 'Hack Nerd Font Mono';
+    font-family: 'Hack Nerd Font Propo';
 	border: none;
 	border-radius: 0;
 	min-height: 0;
@@ -128,8 +128,19 @@
     margin: 0 3px;
 }
 
+#workspaces button.active {
+    color: @blue;
+    background: rgba(122, 162, 247, 0.15);
+}
+
 #workspaces button:hover {
     background: transparent;
+}
+
+/* suppress resize animation when workspaces appear/disappear */
+#left,
+#left-hidden-top {
+    transition: none;
 }
 
 #mpris.paused {

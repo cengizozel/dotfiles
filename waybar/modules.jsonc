@@ -1,15 +1,9 @@
 {
     "hyprland/workspaces": {
-        "format": "{icon}",
+        "format": "{id}",
         "on-scroll-down": "hyprctl dispatch workspace e+1",
         "on-scroll-up":   "hyprctl dispatch workspace e-1",
-        "persistent-workspaces": { "*": 5 },
-        "cursor": true,
-        "format-icons": {
-            "active": "󰮯",
-            "persistent": "",
-            "empty": ""
-         }
+        "cursor": true
     },
 
     "hyprland/window" : {
@@ -155,13 +149,13 @@
     },
 
     "custom/start": {
-        "format": "",
+        "format": "",
         "on-click": "hyprlauncher &"
     },
 
     "custom/ctlcenter" : {
         "tooltip" : false,
-        "format" : "",
+        "format" : "",
         "menu": "on-click-right",
         "menu-file": "~/.config/waybar/context/ctlcenter.xml",
         "menu-actions": {
