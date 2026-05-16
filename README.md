@@ -29,12 +29,18 @@ cd ~/dotfiles && git pull
 
 ## Contents
 
-- `hypr/` — Hyprland window manager configuration and scripts
-- `waybar/` — Waybar status bar configuration and styles
-- `kitty/` — Kitty terminal configuration
-- `nvim/` — Neovim configuration (LazyVim)
-- `claude/` — Claude Code settings
-- `install.sh` — Bootstrap script for fresh installs
+| Repo path | System path |
+|-----------|-------------|
+| `hypr/hyprland.conf` | `~/.config/hypr/hyprland.conf` |
+| `hypr/hyprpaper.conf` | `~/.config/hypr/hyprpaper.conf` |
+| `hypr/scripts/` | `~/.config/hypr/scripts/` |
+| `waybar/config.jsonc` | `~/.config/waybar/config.jsonc` |
+| `waybar/style.css` | `~/.config/waybar/style.css` |
+| `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
+| `nvim/` | `~/.config/nvim/` |
+| `claude/settings.json` | `~/.claude/settings.json` |
+| `wallpapers/` | `~/Pictures/wallpapers/` |
+| `install.sh` | — bootstrap script for fresh installs |
 
 ## Theme
 
