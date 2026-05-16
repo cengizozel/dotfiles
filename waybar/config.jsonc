@@ -2,11 +2,28 @@
     "layer": "top",
     "position": "top",
     "height": 32,
-    "spacing": 4,
+    "margin": "8 8 0 8",
+    "spacing": 0,
+    "exclusive": true,
 
-    "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["clock"],
-    "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery"],
+    "modules-left": ["group/left"],
+    "modules-center": ["group/center"],
+    "modules-right": ["group/right"],
+
+    "group/left": {
+        "orientation": "horizontal",
+        "modules": ["hyprland/workspaces"]
+    },
+
+    "group/center": {
+        "orientation": "horizontal",
+        "modules": ["clock"]
+    },
+
+    "group/right": {
+        "orientation": "horizontal",
+        "modules": ["pulseaudio", "network", "cpu", "memory", "battery"]
+    },
 
     "hyprland/workspaces": {
         "format": "{id}",

@@ -1,43 +1,101 @@
 * {
     font-family: "HackNFM", monospace;
     font-size: 13px;
+    font-weight: bold;
     min-height: 0;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
 }
 
 window#waybar {
-    background: #1a1b26;
+    background: transparent;
     color: #a9b1d6;
-    border-bottom: 2px solid #292e42;
+}
+
+/* Islands */
+#left,
+#center,
+#right {
+    background: #1a1b26;
+    border: 1px solid #292e42;
+    padding: 0 6px;
+}
+
+/* Colored top accent per island */
+#left   { border-top: 2px solid #bb9af7; }
+#center { border-top: 2px solid #7aa2f7; }
+#right  { border-top: 2px solid #9ece6a; }
+
+/* Workspaces */
+#workspaces {
+    padding: 0;
 }
 
 #workspaces button {
-    padding: 0 8px;
-    color: #565f89;
-    border-radius: 0;
+    padding: 0 10px;
+    color: #9d7cd8;
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+    font-weight: bold;
 }
 
 #workspaces button.active {
-    color: #7aa2f7;
-    border-bottom: 2px solid #7aa2f7;
+    background: #bb9af7;
+    color: #15161e;
+    font-weight: bold;
 }
 
-#workspaces button:hover {
-    color: #a9b1d6;
-    background: #292e42;
+#workspaces button:hover,
+#workspaces button.active:hover {
+    background: transparent;
+    color: #9d7cd8;
+    box-shadow: none;
+    text-shadow: none;
 }
 
-#clock,
-#cpu,
-#memory,
-#network,
-#pulseaudio,
-#battery {
-    padding: 0 12px;
-    color: #a9b1d6;
+#workspaces button.active:hover {
+    background: #bb9af7;
+    color: #15161e;
 }
 
+/* Clock */
 #clock {
+    padding: 0 14px;
     color: #7aa2f7;
+    font-size: 13px;
+}
+
+/* Right modules — each gets its own color */
+#pulseaudio {
+    padding: 0 10px;
+    color: #0db9d7;
+    border-right: 1px solid #292e42;
+}
+
+#network {
+    padding: 0 10px;
+    color: #9ece6a;
+    border-right: 1px solid #292e42;
+}
+
+#cpu {
+    padding: 0 10px;
+    color: #ff9e64;
+    border-right: 1px solid #292e42;
+}
+
+#memory {
+    padding: 0 10px;
+    color: #bb9af7;
+    border-right: 1px solid #292e42;
+}
+
+#battery {
+    padding: 0 10px;
+    color: #9ece6a;
 }
 
 #battery.warning {
