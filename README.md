@@ -38,6 +38,7 @@ cd ~/dotfiles && git pull
 | `waybar/style.css` | `~/.config/waybar/style.css` |
 | `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
 | `nvim/` | `~/.config/nvim/` |
+| `bashrc` | `~/.bashrc` |
 | `claude/settings.json` | `~/.claude/settings.json` |
 | `vscodium/settings.json` | `~/.config/VSCodium/User/settings.json` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
