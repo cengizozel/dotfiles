@@ -45,3 +45,17 @@ cd ~/dotfiles && git pull
 ## Theme
 
 [Tokyo Night](https://github.com/folke/tokyonight.nvim) across all components. Font: [Hack Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts).
+
+## Tools
+
+| Tool | Purpose |
+|------|---------|
+| `hyprlauncher` | App launcher (`Super`) |
+| `hyprpaper` | Wallpaper daemon |
+| `hyprshutdown` | Session exit menu |
+| `waybar` | Status bar (floating islands) |
+| `kitty` | Terminal (`Super+T`) |
+| `pavucontrol` | Audio device control (`Super+A`) |
+| `noisetorch` | Microphone noise suppression |
+| `dolphin` | File manager (`Super+E`) |
+| `librewolf` | Browser (`Super+B`) |
