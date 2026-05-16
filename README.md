@@ -30,6 +30,7 @@ cd ~/dotfiles && git pull
 ## Contents
 
 - `hypr/` — Hyprland window manager configuration and scripts
+- `waybar/` — Waybar status bar configuration and styles
 - `nvim/` — Neovim configuration (LazyVim)
 - `claude/` — Claude Code settings
 - `install.sh` — Bootstrap script for fresh installs
