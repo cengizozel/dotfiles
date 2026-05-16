@@ -43,6 +43,13 @@ cd ~/dotfiles && git pull
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `install.sh` | — bootstrap script for fresh installs |
 
+## Useful Commands
+
+```bash
+# See recently installed packages
+grep "installed" /var/log/pacman.log | tail -50
+```
+
 ## ProtonVPN
 
 The daemon runs as a systemd service (`proton-vpn-daemon`). Use the CLI after signing in once:
