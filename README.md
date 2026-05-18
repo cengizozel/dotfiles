@@ -78,7 +78,7 @@ protonvpn servers             # list available servers
 | `kitty` | Terminal (`Super+T`) |
 | `pavucontrol` | Audio device control (`Super+A`) |
 | `noisetorch` | Microphone noise suppression |
-| `dolphin` | File manager (`Super+E`) |
+| `yazi` | File manager (`Super+E`) |
 | `librewolf` | Browser (`Super+B`) |
 | `discord` | Chat / voice |
 | `signal-desktop` | Encrypted messaging (`Super+C`) |
