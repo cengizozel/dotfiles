@@ -83,6 +83,7 @@ protonvpn servers             # list available servers
 | `librewolf` | Browser (`Super+B`) |
 | `discord` | Chat / voice |
 | `vscodium` | Code editor |
+| `signal-desktop` | Encrypted messaging (`Super+C`) |
 | `flatpak` | Sandboxed app runtime |
 | `ollama` | Local LLM runner (CUDA) |
 | `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
