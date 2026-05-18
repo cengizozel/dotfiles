@@ -40,7 +40,6 @@ cd ~/dotfiles && git pull
 | `nvim/` | `~/.config/nvim/` |
 | `bashrc` | `~/.bashrc` |
 | `claude/settings.json` | `~/.claude/settings.json` |
-| `vscodium/settings.json` | `~/.config/VSCodium/User/settings.json` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `install.sh` | — bootstrap script for fresh installs |
 
@@ -82,7 +81,6 @@ protonvpn servers             # list available servers
 | `dolphin` | File manager (`Super+E`) |
 | `librewolf` | Browser (`Super+B`) |
 | `discord` | Chat / voice |
-| `vscodium` | Code editor |
 | `signal-desktop` | Encrypted messaging (`Super+C`) |
 | `flatpak` | Sandboxed app runtime |
 | `ollama` | Local LLM runner (CUDA) |
