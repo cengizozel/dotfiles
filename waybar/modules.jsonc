@@ -1,6 +1,18 @@
 {
     "hyprland/workspaces": {
-        "format": "{id}",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "一",
+            "2": "二",
+            "3": "三",
+            "4": "四",
+            "5": "五",
+            "6": "六",
+            "7": "七",
+            "8": "八",
+            "9": "九",
+            "10": "十"
+        },
         "on-scroll-down": "hyprctl dispatch workspace e+1",
         "on-scroll-up":   "hyprctl dispatch workspace e-1",
         "cursor": true
@@ -52,22 +64,12 @@
         "format": "{icon}",
         "format-bluetooth": "{icon}",
         "tooltip-format": "{volume}%",
-        "format-muted": "<span size='12pt'>󰝟</span>",
+        "format-muted": "󰝟",
         "scroll-step": 2,
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
         "on-click-right": "hyprctl dispatch exec -- pavucontrol -t 4",
         "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": [
-                "<span size='12pt'>󰕿</span>",
-                "<span size='12pt'>󰖀</span>",
-                "<span size='12pt'>󰕾</span>"
-            ]
+            "default": ["󰕿", "󰖀", "󰕾"]
         }
     },
 
@@ -78,21 +80,10 @@
         "on-click-right": "hyprctl dispatch exec -- pavucontrol -t 4"
     },
 
-    "network": {
-        "interval": 10,
-        "format-disabled": "",
-        "format-disconnected": "",
-        "format-wifi": "",
-        "format-ethernet": "",
-        "tooltip-format": "{essid}\n\nFrequency: {frequency}GHz\nStrength: {signalStrength}%\n\n{bandwidthUpBytes}   {bandwidthDownBytes}",
-        "menu": "on-click-right",
-        "menu-file": "~/.config/waybar/context/network.xml",
-        "menu-actions": {
-            "action-1": "nmcli radio wifi off",
-            "action-2": "nmcli radio wifi on",
-            "action-3": "hyprctl dispatch exec -- kitty nmtui",
-            "action-4": "hyprctl dispatch exec -- nm-connection-editor"
-        }
+    "custom/network": {
+        "exec": "python3 ~/.config/waybar/scripts/network.py",
+        "interval": 2,
+        "return-type": "json"
     },
 
     "battery": {
@@ -129,9 +120,9 @@
     },
 
     "mpris": {
-        "format": "{artist} - {title}",
+        "format": "▶ {artist} - {title}",
         "tooltip-format" : "{album}",
-        "format-paused": " {artist} - {title}",
+        "format-paused": "⏸ {artist} - {title}",
         "on-click": "playerctl play-pause",
         "on-scroll-up": "playerctl previous",
         "on-scroll-down": "playerctl next",
@@ -155,7 +146,7 @@
 
     "custom/ctlcenter" : {
         "tooltip" : false,
-        "format" : "",
+        "format" : "",
         "menu": "on-click-right",
         "menu-file": "~/.config/waybar/context/ctlcenter.xml",
         "menu-actions": {
@@ -172,13 +163,13 @@
     },
 
     "custom/arrow-left":  {
-        "format": "",
+        "format": "◀",
         "tooltip": false,
         "cursor": true
     },
 
     "custom/arrow-right": {
-        "format": "",
+        "format": "▶",
         "tooltip": false,
         "cursor": true
     },
@@ -187,8 +178,7 @@
         "orientation": "horizontal",
         "drawer": {
             "transition-duration": 600,
-            "transition-left-to-right": true,
-            "reveal-delay": 450
+            "transition-left-to-right": true
         },
         "modules" : [
             "pulseaudio", "pulseaudio/slider"

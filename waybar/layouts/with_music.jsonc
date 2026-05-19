@@ -1,61 +1,17 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 25,
-    "margin": "5 0",
+    "height": 30,
+    "margin": "4 8 0 8",
 
-    "group/left" : {
+    "group/nav": {
         "orientation": "horizontal",
-        "modules" : [
-            "hyprland/workspaces",
-            "mpris"
-        ]
+        "modules": ["hyprland/workspaces"]
     },
 
-    "group/left-hidden" : {
-        "orientation": "horizontal",
-        "drawer": {
-            "transition-duration": 500,
-            "transition-left-to-right": false,
-            "click-to-reveal": true
-        },
-        "modules" : [
-            "custom/arrow-right", "battery", "cpu", "load"
-        ]
-    },
+    "modules-left":   ["group/nav", "mpris"],
+    "modules-center": [],
+    "modules-right":  ["group/group-volume", "custom/network", "tray", "clock"],
 
-    "group/left-hidden-top" : {
-        "orientation": "horizontal",
-        "modules" : [ "custom/start", "group/left-hidden" ]
-    },
-
-    "group/right" : {
-        "orientation": "horizontal",
-        "modules" : [
-            "group/group-volume", "network", "tray"
-        ]
-    },
-
-    "group/right-hidden" : {
-        "orientation": "horizontal",
-        "drawer": {
-            "transition-duration": 500,
-            "transition-left-to-right": true,
-            "click-to-reveal": true
-        },
-        "modules" : [
-            "custom/arrow-left", "memory", "temperature"
-        ]
-    },
-
-    "group/right-hidden-top" : {
-        "orientation": "horizontal",
-        "modules" : [ "group/right-hidden",  "custom/ctlcenter" ]
-    },
-
-    "modules-left"   : ["group/left-hidden-top", "group/left"],
-    "modules-center" : ["clock"],
-    "modules-right"  : [ "group/right",  "group/right-hidden-top"],
-
-    "include": [ "~/.config/waybar/modules.jsonc" ]
+    "include": ["~/.config/waybar/modules.jsonc"]
 }
