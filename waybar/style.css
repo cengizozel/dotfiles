@@ -47,10 +47,23 @@
     border-radius: 15px;
     margin: 0 4px;
     min-width: 60px;
+    transition: opacity 0.3s ease;
 }
 
 #custom-visualizer.idle {
     color: transparent;
+}
+
+#custom-visualizer.fading {
+    opacity: 0;
+    transition: opacity 3s ease;
+}
+
+#custom-visualizer.gone {
+    opacity: 0;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
 }
 
 /* Workspaces */
