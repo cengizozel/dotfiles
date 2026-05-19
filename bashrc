@@ -11,5 +11,7 @@ PS1='[\u@\h \W]\$ '
 export PATH="$HOME/.local/bin:$PATH"
 
 alias pv='protonvpn'
+alias pvse='protonvpn connect --country SE'
+alias pvdc='protonvpn disconnect'
 
 fastfetch
