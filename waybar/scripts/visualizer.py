@@ -96,7 +96,7 @@ try:
 
             silence_start = None
             sine_phase = 0.0
-            text = ''.join(BLOCK[min(v, 8)] for v in values[:BARS])
+            text = ''.join(BLOCK[min(v, 8)] for v in values[BARS:])
             print(json.dumps({'text': text, 'tooltip': tooltip}), flush=True)
         except:
             print(json.dumps({"text": "▁" * BARS, "class": "idle", "tooltip": ""}), flush=True)

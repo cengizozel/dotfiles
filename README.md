@@ -35,7 +35,12 @@ cd ~/dotfiles && git pull
 | `hypr/hyprpaper.conf` | `~/.config/hypr/hyprpaper.conf` |
 | `hypr/scripts/` | `~/.config/hypr/scripts/` |
 | `waybar/config.jsonc` | `~/.config/waybar/config.jsonc` |
+| `waybar/modules.jsonc` | `~/.config/waybar/modules.jsonc` |
 | `waybar/style.css` | `~/.config/waybar/style.css` |
+| `waybar/scripts/` | `~/.config/waybar/scripts/` |
+| `waybar/layouts/` | `~/.config/waybar/layouts/` |
+| `waybar/colors/` | `~/.config/waybar/colors/` |
+| `waybar/context/` | `~/.config/waybar/context/` |
 | `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
 | `nvim/` | `~/.config/nvim/` |
 | `bashrc` | `~/.bashrc` |
