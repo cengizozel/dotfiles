@@ -9,8 +9,8 @@
         "modules": ["hyprland/workspaces"]
     },
 
-    "modules-left":   ["group/nav", "mpris"],
-    "modules-center": [],
+    "modules-left":   ["group/nav"],
+    "modules-center": ["custom/visualizer"],
     "modules-right":  ["group/group-volume", "custom/network", "tray", "clock"],
 
     "include": ["~/.config/waybar/modules.jsonc"]
