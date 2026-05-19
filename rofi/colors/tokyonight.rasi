@@ -1,9 +1,12 @@
 * {
-    background:     rgba(26, 27, 38, 0.8);
-    background-alt: rgba(26, 27, 38, 0.8);
-    foreground:     #9ece6a;
-    selected:       rgba(180, 249, 248, 0.8);
-    selected-alt:   rgba(114, 135, 253, 0.8);
-    active:         rgba(158, 206, 106, 0.8);
-    urgent:         rgba(255, 0, 0, 0.8);
+    bg:          rgba(8, 8, 11, 0.95);
+    fg:          #acb0d0;
+    dim:         #787c99;
+    accent:      #7aa2f7;
+    urgent:      #f7768e;
+
+    accent-fade: rgba(122, 162, 247, 0.10);
+    accent-edge: rgba(122, 162, 247, 0.15);
+    accent-sep:  rgba(122, 162, 247, 0.08);
+    urgent-fade: rgba(247, 118, 142, 0.10);
 }
