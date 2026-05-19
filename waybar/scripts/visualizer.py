@@ -45,8 +45,6 @@ def make_sine(phase, amplitude=1.0):
         chars.append(BLOCK[min(height, 8)])
     return ''.join(chars)
 
-frame = 0
-tooltip = ""
 silence_start = None
 sine_phase = 0.0
 
@@ -55,20 +53,6 @@ try:
         line = line.strip()
         if not line:
             continue
-
-        if frame % 10 == 0:
-            try:
-                r = subprocess.run(['playerctl', 'status'],
-                                   capture_output=True, text=True, timeout=0.2)
-                if r.stdout.strip() == 'Playing':
-                    artist = subprocess.run(['playerctl', 'metadata', 'artist'], capture_output=True, text=True, timeout=0.2).stdout.strip()
-                    title  = subprocess.run(['playerctl', 'metadata', 'title'],  capture_output=True, text=True, timeout=0.2).stdout.strip()
-                    tooltip = f"{artist} - {title}" if artist else title
-                else:
-                    tooltip = ""
-            except:
-                tooltip = ""
-        frame += 1
 
         try:
             values = [int(v) for v in line.split(';') if v.strip().isdigit()]
@@ -83,23 +67,23 @@ try:
                 elapsed = time.time() - silence_start
 
                 if elapsed < SINE_AFTER:
-                    print(json.dumps({"text": "▁" * BARS, "class": "idle", "tooltip": ""}), flush=True)
+                    print(json.dumps({"text": "▁" * BARS, "class": "idle"}), flush=True)
                 elif elapsed < FADE_START:
                     sine_phase += 0.05
-                    print(json.dumps({'text': make_sine(sine_phase), 'class': 'sine', 'tooltip': ''}), flush=True)
+                    print(json.dumps({'text': make_sine(sine_phase), 'class': 'sine'}), flush=True)
                 elif elapsed < FADE_START + FADE_DURATION:
                     sine_phase += 0.05
-                    print(json.dumps({'text': make_sine(sine_phase), 'class': 'fading', 'tooltip': ''}), flush=True)
+                    print(json.dumps({'text': make_sine(sine_phase), 'class': 'fading'}), flush=True)
                 else:
-                    print(json.dumps({"text": "", "class": "gone", "tooltip": ""}), flush=True)
+                    print(json.dumps({"text": "", "class": "gone"}), flush=True)
                 continue
 
             silence_start = None
             sine_phase = 0.0
             text = ''.join(BLOCK[min(v, 8)] for v in values[BARS:])
-            print(json.dumps({'text': text, 'tooltip': tooltip}), flush=True)
+            print(json.dumps({'text': text}), flush=True)
         except:
-            print(json.dumps({"text": "▁" * BARS, "class": "idle", "tooltip": ""}), flush=True)
+            print(json.dumps({"text": "▁" * BARS, "class": "idle"}), flush=True)
 
 except (BrokenPipeError, KeyboardInterrupt):
     pass
