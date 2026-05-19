@@ -37,6 +37,22 @@
 #pulseaudio     { min-width: 1.4em; }
 #custom-network { min-width: 150px; }
 
+/* Visualizer */
+#custom-visualizer {
+    font-size: 12px;
+    letter-spacing: -1px;
+    padding: 4px 14px;
+    color: @blue;
+    background: @module-bg;
+    border-radius: 15px;
+    margin: 0 4px;
+    min-width: 60px;
+}
+
+#custom-visualizer.idle {
+    color: transparent;
+}
+
 /* Workspaces */
 #workspaces button {
     color: @inactive;

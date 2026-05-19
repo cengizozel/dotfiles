@@ -80,6 +80,14 @@
         "on-click-right": "hyprctl dispatch exec -- pavucontrol -t 4"
     },
 
+    "custom/visualizer": {
+        "exec": "python3 /home/cengiz/.config/waybar/scripts/visualizer.py",
+        "return-type": "json",
+        "format": "{text}",
+        "tooltip": false,
+        "restart-interval": 1
+    },
+
     "custom/network": {
         "exec": "python3 ~/.config/waybar/scripts/network.py",
         "interval": 2,
