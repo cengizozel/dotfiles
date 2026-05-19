@@ -21,6 +21,7 @@
 #nav,
 #mpris,
 #custom-network,
+#custom-notification,
 #group-volume,
 #tray,
 #clock {
@@ -34,8 +35,8 @@
 #clock          { padding: 4px 20px; }
 #tray           { padding: 4px 10px; }
 #group-volume   { padding: 4px 14px; }
-#pulseaudio     { min-width: 1.4em; }
-#custom-network { min-width: 150px; }
+#pulseaudio     { min-width: 1.4em; font-size: 17px; }
+#custom-network { min-width: 100px; }
 
 /* Visualizer */
 #custom-visualizer {

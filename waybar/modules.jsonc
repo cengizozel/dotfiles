@@ -66,6 +66,7 @@
         "tooltip-format": "{volume}%",
         "format-muted": "󰝟",
         "scroll-step": 2,
+        "max-volume": 100,
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
         "on-click-right": "hyprctl dispatch exec -- pavucontrol -t 4",
         "format-icons": {
@@ -91,7 +92,8 @@
     "custom/network": {
         "exec": "python3 ~/.config/waybar/scripts/network.py",
         "interval": 2,
-        "return-type": "json"
+        "return-type": "json",
+        "on-click": "sh -c 'if [ \"$(cat /tmp/waybar-net-mode 2>/dev/null)\" = \"both\" ]; then echo down > /tmp/waybar-net-mode; else echo both > /tmp/waybar-net-mode; fi'"
     },
 
     "battery": {
@@ -111,20 +113,8 @@
 
     "clock": {
         "timezone": "Europe/Istanbul",
-        "tooltip-format": "<tt><small>{calendar}</small></tt>",
-        "format-alt": "{:%H:%M %d %B %Y}",
-        "calendar": {
-            "mode": "year",
-            "weeks-pos": "right",
-            "mode-mon-col": 3,
-            "format": {
-                "months":   "<span color='#acb0d0'><b>{}</b></span>",
-                "weeks":    "<span color='#7aa2f7'><b>W{}</b></span>",
-                "weekdays": "<span color='#e0af68'><b>{}</b></span>",
-                "days":     "<span color='#acb0d0'><b>{}</b></span>",
-                "today":    "<span color='#41a6b5'><b><u>{}</u></b></span>"
-            }
-        }
+        "format": "{:%I:%M %p}",
+        "tooltip": false
     },
 
     "mpris": {
@@ -145,6 +135,27 @@
             "balanced": "",
             "power-saver": ""
         }
+    },
+
+    "custom/notification": {
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "󰂚",
+            "none": "󰂜",
+            "dnd-notification": "󰂛",
+            "dnd-none": "󰂛",
+            "inhibited-notification": "󰂚",
+            "inhibited-none": "󰂜",
+            "dnd-inhibited-notification": "󰂛",
+            "dnd-inhibited-none": "󰂛"
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
     },
 
     "custom/start": {

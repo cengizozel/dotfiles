@@ -11,7 +11,7 @@
 
     "modules-left":   ["group/nav"],
     "modules-center": ["custom/visualizer"],
-    "modules-right":  ["group/group-volume", "custom/network", "tray", "clock"],
+    "modules-right":  ["group/group-volume", "custom/network", "tray", "clock", "custom/notification"],
 
     "include": ["~/.config/waybar/modules.jsonc"]
 }

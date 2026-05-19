@@ -41,6 +41,8 @@ cd ~/dotfiles && git pull
 | `waybar/layouts/` | `~/.config/waybar/layouts/` |
 | `waybar/colors/` | `~/.config/waybar/colors/` |
 | `waybar/context/` | `~/.config/waybar/context/` |
+| `swaync/config.json` | `~/.config/swaync/config.json` |
+| `swaync/style.css` | `~/.config/swaync/style.css` |
 | `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
 | `nvim/` | `~/.config/nvim/` |
 | `bashrc` | `~/.bashrc` |
@@ -80,6 +82,7 @@ protonvpn servers             # list available servers
 | `hyprpaper` | Wallpaper daemon |
 | `hyprshutdown` | Session exit menu |
 | `waybar` | Status bar (floating islands) |
+| `swaync` | Notification daemon + panel |
 | `kitty` | Terminal (`Super+T`) |
 | `pavucontrol` | Audio device control (`Super+A`) |
 | `noisetorch` | Microphone noise suppression |
