@@ -120,9 +120,12 @@
         }
     },
 
-    "clock": {
-        "timezone": "Europe/Istanbul",
-        "format": "{:%I時%M分}",
+    "custom/clock": {
+        "exec": "~/.config/waybar/scripts/clock.sh",
+        "return-type": "json",
+        "interval": 5,
+        "signal": 9,
+        "on-click": "[ -f /tmp/waybar-clock-alt ] && rm /tmp/waybar-clock-alt || touch /tmp/waybar-clock-alt && kill -SIGRTMIN+9 $(pidof waybar)",
         "tooltip": false
     },
 
