@@ -2,6 +2,10 @@
 
 My Arch Linux dotfiles.
 
+## Note on non-Arch configs
+
+`aerospace.toml` is the config for [AeroSpace](https://github.com/nikitabobko/AeroSpace), a tiling window manager for macOS. It's stored here to keep all my dotfiles in one place.
+
 ## Fresh Install
 
 Run this on a base Arch install with `sudo` configured:
@@ -50,6 +54,7 @@ cd ~/dotfiles && git pull
 | `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `install.sh` | — bootstrap script for fresh installs |
+| `aerospace.toml` | `~/.config/aerospace/aerospace.toml` (macOS) |
 
 ## Useful Commands
 
