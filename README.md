@@ -53,6 +53,8 @@ cd ~/dotfiles && git pull
 | `rofi/` | `~/.config/rofi/` |
 | `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
+| `librewolf/userChrome.css` | `~/.config/librewolf/librewolf/<profile>/chrome/userChrome.css` |
+| `librewolf/sidebery-data.json` | Sidebery backup — restore via Sidebery Settings → Import |
 | `install.sh` | — bootstrap script for fresh installs |
 | `aerospace.toml` | `~/.config/aerospace/aerospace.toml` (macOS) |
 
