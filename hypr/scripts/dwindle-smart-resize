@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Usage:
+#   dwindle-smart-resize grow [auto|horiz|vert]
+#   dwindle-smart-resize shrink [auto|horiz|vert]
+#
+# Optional env vars:
+#   HYPR_RESIZE_STEP=50
+#   HYPR_RESIZE_TOL=24
+
+action="${1:-}"
+axis="${2:-auto}"
+step="${HYPR_RESIZE_STEP:-50}"
+tol="${HYPR_RESIZE_TOL:-24}"
+
+case "$action" in
+  grow|shrink) ;;
+  *)
+    echo "usage: $0 grow|shrink [auto|horiz|vert]" >&2
+    exit 2
+    ;;
+esac
+
+active_json="$(hyprctl activewindow -j)"
+clients_json="$(hyprctl clients -j)"
+
+delta="$(
+jq -rn \
+  --arg action "$action" \
+  --arg axis "$axis" \
+  --argjson step "$step" \
+  --argjson tol "$tol" \
+  --argjson active "$active_json" \
+  --argjson clients "$clients_json" '
+  def abs: if . < 0 then -. else . end;
+  def max(a;b): if a > b then a else b end;
+  def min(a;b): if a < b then a else b end;
+
+  def rect($w): {
+    x1: ($w.at[0] | tonumber),
+    y1: ($w.at[1] | tonumber),
+    x2: (($w.at[0] | tonumber) + ($w.size[0] | tonumber)),
+    y2: (($w.at[1] | tonumber) + ($w.size[1] | tonumber))
+  };
+
+  def overlap_1d($a1; $a2; $b1; $b2):
+    min($a2; $b2) - max($a1; $b1);
+
+  def candidates($a; $nbrs; $sides):
+    [$nbrs[]
+      | rect(.) as $n
+      | if ($sides | contains(["right"])) then (
+          (($n.x1 - $a.x2) | abs) as $d
+          | overlap_1d($a.y1; $a.y2; $n.y1; $n.y2) as $ov
+          | select($d <= $tol and $ov > 0)
+          | { side: "right", score: (($ov * 1000) - $d) }
+        ) else empty end,
+        if ($sides | contains(["left"])) then (
+          (($n.x2 - $a.x1) | abs) as $d
+          | overlap_1d($a.y1; $a.y2; $n.y1; $n.y2) as $ov
+          | select($d <= $tol and $ov > 0)
+          | { side: "left", score: (($ov * 1000) - $d) }
+        ) else empty end,
+        if ($sides | contains(["down"])) then (
+          (($n.y1 - $a.y2) | abs) as $d
+          | overlap_1d($a.x1; $a.x2; $n.x1; $n.x2) as $ov
+          | select($d <= $tol and $ov > 0)
+          | { side: "down", score: (($ov * 1000) - $d) }
+        ) else empty end,
+        if ($sides | contains(["up"])) then (
+          (($n.y2 - $a.y1) | abs) as $d
+          | overlap_1d($a.x1; $a.x2; $n.x1; $n.x2) as $ov
+          | select($d <= $tol and $ov > 0)
+          | { side: "up", score: (($ov * 1000) - $d) }
+        ) else empty end
+    ] | sort_by(.score) | reverse | .[0];
+
+  def delta_for($side; $grow):
+    if $side == "right" then if $grow then "\($step) 0" else "\(-$step) 0" end
+    elif $side == "left" then if $grow then "\(-$step) 0" else "\($step) 0" end
+    elif $side == "down" then if $grow then "0 \($step)" else "0 \(-$step)" end
+    elif $side == "up"   then if $grow then "0 \(-$step)" else "0 \($step)" end
+    else empty
+    end;
+
+  if ($active | has("address") | not) or ($active.address == "") then empty
+  elif ($active.floating == true) then empty
+  else
+    rect($active) as $a
+    | ($active.workspace.id // null) as $wsid
+    | [$clients[] | select(.address != $active.address and .floating == false and ((.workspace.id // null) == $wsid))] as $nbrs
+    | ($action == "grow") as $grow
+    | (if $axis == "horiz" then ["right","left"]
+       elif $axis == "vert" then ["down","up"]
+       else ["right","left","down","up"]
+       end) as $sides
+    | candidates($a; $nbrs; $sides) as $best
+    | if $best == null then empty
+      else delta_for($best.side; $grow)
+      end
+  end
+'
+)"
+
+[ -n "$delta" ] || exit 0
+
+hyprctl dispatch -- resizeactive $delta
