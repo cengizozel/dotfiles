@@ -60,6 +60,15 @@
         "format-icons": ["","","","",""]
     },
 
+    "custom/volume": {
+        "exec": "python3 ~/.config/waybar/scripts/volume.py",
+        "return-type": "json",
+        "interval": 1,
+        "signal": 8,
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && touch /tmp/waybar-vol-changed && kill -SIGRTMIN+8 $(pidof waybar)",
+        "on-click-right": "hyprctl dispatch exec -- pavucontrol -t 4"
+    },
+
     "pulseaudio": {
         "format": "{icon}",
         "format-bluetooth": "{icon}",
@@ -113,7 +122,7 @@
 
     "clock": {
         "timezone": "Europe/Istanbul",
-        "format": "{:%I:%M %p}",
+        "format": "{:%I時%M分}",
         "tooltip": false
     },
 
@@ -200,7 +209,7 @@
             "transition-left-to-right": true
         },
         "modules" : [
-            "pulseaudio", "pulseaudio/slider"
+            "custom/volume", "pulseaudio/slider"
         ]
     }
 }

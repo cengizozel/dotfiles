@@ -1,7 +1,7 @@
 @import "colors/colors.css";
 
 * {
-    font-family: 'Hack Nerd Font Propo', 'Iosevka Nerd Font', sans-serif;
+    font-family: 'Hack Nerd Font Propo', 'Noto Sans CJK JP', 'Symbols Nerd Font', sans-serif;
     border: none;
     border-radius: 0;
     min-height: 0;
@@ -31,12 +31,10 @@
     margin: 0 4px;
 }
 
-#nav            { padding: 4px 8px 4px 14px; }
-#clock          { padding: 4px 20px; }
-#tray           { padding: 4px 10px; }
 #group-volume   { padding: 4px 14px; }
-#pulseaudio     { min-width: 1.4em; font-size: 17px; }
-#custom-network { min-width: 100px; }
+#pulseaudio,
+#custom-volume.icon   { font-size: 17px; }
+#custom-volume.percent { font-size: 14px; }
 
 /* Visualizer */
 #custom-visualizer {
@@ -93,6 +91,8 @@
 #mpris.paused { color: @inactive; }
 
 /* Volume slider */
+#pulseaudio-slider { margin-left: 6px; }
+
 #pulseaudio-slider trough {
     min-width: 60px;
     min-height: 5px;
