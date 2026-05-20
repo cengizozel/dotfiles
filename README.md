@@ -46,6 +46,8 @@ cd ~/dotfiles && git pull
 | `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
 | `nvim/` | `~/.config/nvim/` |
 | `bashrc` | `~/.bashrc` |
+| `rofi/` | `~/.config/rofi/` |
+| `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `install.sh` | — bootstrap script for fresh installs |
 
@@ -92,3 +94,4 @@ protonvpn servers             # list available servers
 | `flatpak` | Sandboxed app runtime |
 | `ollama` | Local LLM runner (CUDA) |
 | `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
+| `vscodium` | Code editor |
