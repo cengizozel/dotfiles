@@ -23,7 +23,7 @@
   "notification-inline-replies": false,
   "notification-body-image-height": 80,
   "notification-body-image-width": 160,
-  "image-visibility": "when-available",
+  "image-visibility": "never",
   "transition-time": 200,
   "hide-on-clear": false,
   "hide-on-action": true,
