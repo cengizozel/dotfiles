@@ -46,7 +46,6 @@ cd ~/dotfiles && git pull
 | `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
 | `nvim/` | `~/.config/nvim/` |
 | `bashrc` | `~/.bashrc` |
-| `claude/settings.json` | `~/.claude/settings.json` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `install.sh` | — bootstrap script for fresh installs |
 
