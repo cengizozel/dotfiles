@@ -58,6 +58,32 @@ cd ~/dotfiles && git pull
 | `install.sh` | — bootstrap script for fresh installs |
 | `aerospace.toml` | `~/.config/aerospace/aerospace.toml` (macOS) |
 
+## Apple Magic Keyboard (Bluetooth)
+
+Pair via `bluetoothctl`:
+
+```bash
+sudo systemctl enable --now bluetooth
+bluetoothctl
+# inside bluetoothctl:
+power on
+agent on
+scan on
+trust <MAC>
+pair <MAC>
+connect <MAC>
+```
+
+Fix modifier key layout (swap Option ↔ Command to match PC keyboard positions):
+
+```bash
+# Apply immediately
+echo 1 | sudo tee /sys/module/hid_apple/parameters/swap_opt_cmd
+
+# Make permanent
+echo "options hid_apple swap_opt_cmd=1" | sudo tee /etc/modprobe.d/hid_apple.conf
+```
+
 ## Useful Commands
 
 ```bash
