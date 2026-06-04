@@ -1,5 +1,5 @@
 configuration {
-    modi:              "drun,run,filebrowser";
+    modi:              "drun,run,filebrowser,calc";
     show-icons:        false;
     display-drun:      "";
     display-run:       "";

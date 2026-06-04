@@ -1,0 +1,21 @@
+// Calculator layout: inherits the launcher theme, but drops the results
+// list (history is disabled, so it's always empty) and widens the window
+// so currency/unit results fit. The live answer renders in the message bar.
+@import "config.rasi"
+
+window {
+    width: 560px;
+}
+
+mainbox {
+    children: [ "inputbar", "message" ];
+}
+
+message {
+    padding: 14px 20px;
+    border:  0;
+}
+
+textbox {
+    text-color: @accent;
+}
