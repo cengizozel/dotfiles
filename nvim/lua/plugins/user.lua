@@ -1,10 +1,20 @@
 return {
-{
-  "ibhagwan/fzf-lua",
-  -- optional for icon support
-  dependencies = { "nvim-tree/nvim-web-devicons" },
-  -- or if using mini.icons/mini.nvim
-  -- dependencies = { "echasnovski/mini.icons" },
-  opts = {}
-}
+  {
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {},
+  },
+  { "ThePrimeagen/vim-be-good" },
+  {
+    "folke/snacks.nvim",
+    opts = {
+      picker = {
+        sources = {
+          projects = {
+            dev = { "~/Documents/GitHub" },
+          },
+        },
+      },
+    },
+  },
 }
