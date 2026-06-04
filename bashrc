@@ -10,6 +10,7 @@ alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 export PATH="$HOME/.local/bin:$PATH"
 
+alias ollama='docker exec -it ollama ollama'
 alias pv='protonvpn'
 alias pvse='protonvpn connect --country SE'
 alias pvdc='protonvpn disconnect'
