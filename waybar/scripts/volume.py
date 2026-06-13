@@ -5,19 +5,19 @@ STATE_FILE = '/tmp/waybar-vol-changed'
 ICONS = ['󰕿', '󰖀', '󰕾']
 MUTED_ICON = '󰝟'
 
-def get_volume():
-    r = subprocess.run(['pactl', 'get-sink-volume', '@DEFAULT_SINK@'], capture_output=True, text=True)
+def get_state():
+    # wpctl prints e.g. "Volume: 0.68" or "Volume: 0.68 [MUTED]"
+    r = subprocess.run(['wpctl', 'get-volume', '@DEFAULT_AUDIO_SINK@'], capture_output=True, text=True)
+    vol = 0
     for part in r.stdout.split():
-        if part.endswith('%'):
-            return min(int(part[:-1]), 100)
-    return 0
+        try:
+            vol = min(round(float(part) * 100), 100)
+            break
+        except ValueError:
+            continue
+    return vol, 'MUTED' in r.stdout
 
-def is_muted():
-    r = subprocess.run(['pactl', 'get-sink-mute', '@DEFAULT_SINK@'], capture_output=True, text=True)
-    return 'yes' in r.stdout
-
-vol = get_volume()
-muted = is_muted()
+vol, muted = get_state()
 
 recently_changed = os.path.exists(STATE_FILE) and (time.time() - os.path.getmtime(STATE_FILE)) < 1.5
 
