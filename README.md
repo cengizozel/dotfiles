@@ -18,18 +18,10 @@ This will:
 1. Install `yay` (AUR helper)
 2. Install all packages (skips any already installed)
 3. Clone this repo to `~/dotfiles`
-4. Symlink configs to the right places
+4. Link configs into place
 5. Enable NetworkManager and SDDM
 
 Reboot after it finishes.
-
-## Updating configs
-
-Since configs are symlinked from `~/dotfiles`, just pull to get the latest:
-
-```bash
-cd ~/dotfiles && git pull
-```
 
 ## Contents
 
@@ -112,7 +104,7 @@ protonvpn servers             # list available servers
 
 | Tool | Purpose |
 |------|---------|
-| `hyprlauncher` | App launcher (`Super`) |
+| `rofi` | App launcher (`Alt+Space`), calculator (`Alt+C`) |
 | `hyprpaper` | Wallpaper daemon |
 | `hyprshutdown` | Session exit menu |
 | `waybar` | Status bar (floating islands) |
