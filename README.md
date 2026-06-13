@@ -2,6 +2,8 @@
 
 Hyprland desktop on Arch Linux, themed with Tokyo Night.
 
+![Desktop screenshot](screenshot.png)
+
 ## Setup
 
 There is no bootstrap script. Clone the repo and copy each config into the
