@@ -1,4 +1,4 @@
-# iusearchbtw
+# dotfiles
 
 My Arch Linux dotfiles.
 
@@ -11,7 +11,7 @@ My Arch Linux dotfiles.
 Run this on a base Arch install with `sudo` configured:
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/cengizozel/iusearchbtw/main/install.sh)
+bash <(curl -s https://raw.githubusercontent.com/cengizozel/dotfiles/main/install.sh)
 ```
 
 This will:

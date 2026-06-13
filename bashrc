@@ -16,3 +16,11 @@ alias pvse='protonvpn connect --country SE'
 alias pvdc='protonvpn disconnect'
 
 fastfetch
+
+# pnpm
+export PNPM_HOME="/home/cengiz/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
