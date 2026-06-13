@@ -20,7 +20,7 @@ def get_bytes(iface):
 def read_mode():
     try:
         return open(MODE_FILE).read().strip()
-    except:
+    except OSError:
         return 'down'
 
 iface = get_iface()
@@ -37,7 +37,7 @@ if os.path.exists(CACHE):
     try:
         with open(CACHE) as f:
             cache = json.load(f)
-    except:
+    except (OSError, json.JSONDecodeError):
         pass
 
 if cache.get('iface') == iface:

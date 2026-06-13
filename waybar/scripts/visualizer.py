@@ -18,7 +18,7 @@ sleep_timer = 0
 
 [input]
 method = pulse
-source = alsa_output.usb-Logitech_G733_Gaming_Headset_0000000000000000-00.analog-stereo.monitor
+source = auto
 
 [output]
 method = raw
@@ -82,7 +82,7 @@ try:
             sine_phase = 0.0
             text = ''.join(BLOCK[min(v, 8)] for v in values[BARS:])
             print(json.dumps({'text': text}), flush=True)
-        except:
+        except (ValueError, IndexError):
             print(json.dumps({"text": "▁" * BARS, "class": "idle"}), flush=True)
 
 except (BrokenPipeError, KeyboardInterrupt):
