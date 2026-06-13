@@ -28,7 +28,7 @@ My Arch Linux dotfiles.
 | `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `librewolf/userChrome.css` | `~/.config/librewolf/librewolf/<profile>/chrome/userChrome.css` |
-| `aerospace.toml` | `~/.config/aerospace/aerospace.toml` (macOS) |
+| `aerospace.toml` | `~/.aerospace.toml` (macOS) |
 
 ## Apple Magic Keyboard (Bluetooth)
 

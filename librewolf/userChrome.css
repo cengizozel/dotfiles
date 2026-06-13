@@ -43,16 +43,6 @@
    }
 }
 
- /* Suppress Connecting/Waiting/Reading/Transerring */
-/*  #statuspanel[type="status"] {
-   display: none !important;
- } */
-
- /* Suppress Link Destination Overlay */
-/*  #statuspanel[type="overLink"] {
-   display: none !important;
- } */
-
 /* URL BAR */
 #urlbar {
    border-radius: 30px !important;
@@ -158,14 +148,6 @@
     border: 0 !important;
  }
  #navigator-toolbox {
-    border: 1 !important;
- }
-
- .titlebar-spacer[type="pre-tabs"] {
-    border: 0 !important;
- }
-
- .tabbrowser-tab::after {
     border: 0 !important;
  }
 
@@ -214,7 +196,7 @@ toolbarbutton{
 }
 
 toolbarbutton:hover{
-   cursor: pointer !important;;
+   cursor: pointer !important;
 }
 
 toolbarbutton#urlbar-zoom-button{
