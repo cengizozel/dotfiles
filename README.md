@@ -30,27 +30,19 @@ git clone https://github.com/cengizozel/dotfiles.git
 `aerospace.toml` is for [AeroSpace](https://github.com/nikitabobko/AeroSpace), a
 tiling window manager for macOS. It is kept here so all configs live in one place.
 
-## Apps and keybinds
+## Keybinds
 
-| App | Role |
-|-----|------|
-| `hyprland` | Wayland compositor and window manager |
-| `waybar` | Status bar (floating islands) |
-| `swaync` | Notification daemon and panel (`Super+N`) |
-| `rofi` | App launcher (`Alt+Space`), calculator (`Alt+C`) |
-| `kitty` | Terminal (`Super+T`) |
-| `nvim` | Editor (LazyVim) |
-| `yazi` | File manager (`Super+E`) |
-| `librewolf` | Browser (`Super+B`) |
-| `hyprpaper` | Wallpaper daemon |
-| `hyprshutdown` | Session exit menu (`Super+M`) |
-| `pavucontrol` | Audio device control (`Super+A`) |
-| `noisetorch` | Microphone noise suppression |
-| `signal-desktop` | Encrypted messaging (`Super+C`) |
-| `discord` | Chat and voice |
-| `vscodium` | Code editor |
-| `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
-| `flatpak` | Sandboxed app runtime |
+| Keybind | Action |
+|---------|--------|
+| `Super+T` | Terminal (kitty) |
+| `Super+E` | File manager (yazi) |
+| `Super+B` | Browser (librewolf) |
+| `Super+C` | Messaging (signal-desktop) |
+| `Super+A` | Audio device control (pavucontrol) |
+| `Super+N` | Notification panel (swaync) |
+| `Super+M` | Session exit menu (hyprshutdown) |
+| `Alt+Space` | App launcher (rofi) |
+| `Alt+C` | Calculator (rofi) |
 
 ## Theme
 
