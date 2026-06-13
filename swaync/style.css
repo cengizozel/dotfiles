@@ -54,7 +54,7 @@
     background: transparent;
 }
 
-/* Popup toasts — keep background */
+/* Popup toasts, keep background */
 .floating-notifications .notification-background {
     background: rgba(20, 20, 28, 0.9);
     border-radius: 12px;
@@ -223,7 +223,7 @@
     opacity: 0.4;
 }
 
-/* Group header — expand button below the X */
+/* Group header, expand button below the X */
 .notification-group .notification-group-headers {
     background: rgba(122, 162, 247, 0.08);
     border-radius: 20px;

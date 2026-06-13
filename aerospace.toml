@@ -1,10 +1,10 @@
-# AeroSpace tiling window manager (macOS) — https://nikitabobko.github.io/AeroSpace
+# AeroSpace tiling window manager for macOS. https://nikitabobko.github.io/AeroSpace
 # Lives at ~/.aerospace.toml
 
 after-startup-command = []
 start-at-login = true
 
-# Normalizations — https://nikitabobko.github.io/AeroSpace/guide#normalization
+# Normalizations. See https://nikitabobko.github.io/AeroSpace/guide#normalization
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
@@ -72,7 +72,7 @@ automatically-unhide-macos-hidden-apps = false
 
     alt-shift-semicolon = 'mode service'
 
-# Service mode — esc returns to main
+# Service mode (esc returns to main)
 [mode.service.binding]
     esc = ['reload-config', 'mode main']
     r = ['flatten-workspace-tree', 'mode main']        # reset layout

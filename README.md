@@ -1,101 +1,63 @@
 # dotfiles
 
-My Arch Linux dotfiles.
+Hyprland desktop on Arch Linux, themed with Tokyo Night.
 
-## Note on non-Arch configs
+## Setup
 
-`aerospace.toml` is the config for [AeroSpace](https://github.com/nikitabobko/AeroSpace), a tiling window manager for macOS. It's stored here to keep all my dotfiles in one place.
+There is no bootstrap script. Clone the repo and copy each config into the
+location shown below, then install the matching packages.
 
-## Contents
+```bash
+git clone https://github.com/cengizozel/dotfiles.git
+```
 
-| Repo path | System path |
-|-----------|-------------|
-| `hypr/hyprland.conf` | `~/.config/hypr/hyprland.conf` |
-| `hypr/hyprpaper.conf` | `~/.config/hypr/hyprpaper.conf` |
-| `hypr/scripts/` | `~/.config/hypr/scripts/` |
-| `waybar/config.jsonc` | `~/.config/waybar/config.jsonc` |
-| `waybar/modules.jsonc` | `~/.config/waybar/modules.jsonc` |
-| `waybar/style.css` | `~/.config/waybar/style.css` |
-| `waybar/scripts/` | `~/.config/waybar/scripts/` |
-| `waybar/layouts/` | `~/.config/waybar/layouts/` |
-| `waybar/colors/` | `~/.config/waybar/colors/` |
-| `swaync/config.json` | `~/.config/swaync/config.json` |
-| `swaync/style.css` | `~/.config/swaync/style.css` |
-| `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
+## Configs
+
+| Path | Installs to |
+|------|-------------|
+| `hypr/` | `~/.config/hypr/` |
+| `waybar/` | `~/.config/waybar/` |
+| `swaync/` | `~/.config/swaync/` |
+| `rofi/` | `~/.config/rofi/` |
+| `kitty/` | `~/.config/kitty/` |
 | `nvim/` | `~/.config/nvim/` |
 | `bashrc` | `~/.bashrc` |
-| `rofi/` | `~/.config/rofi/` |
 | `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `librewolf/userChrome.css` | `~/.config/librewolf/librewolf/<profile>/chrome/userChrome.css` |
-| `aerospace.toml` | `~/.aerospace.toml` (macOS) |
+| `aerospace.toml` | `~/.aerospace.toml` (macOS, see note below) |
 
-## Apple Magic Keyboard (Bluetooth)
+`aerospace.toml` is for [AeroSpace](https://github.com/nikitabobko/AeroSpace), a
+tiling window manager for macOS. It is kept here so all configs live in one place.
 
-Pair via `bluetoothctl`:
+## Apps and keybinds
 
-```bash
-sudo systemctl enable --now bluetooth
-bluetoothctl
-# inside bluetoothctl:
-power on
-agent on
-scan on
-trust <MAC>
-pair <MAC>
-connect <MAC>
-```
-
-Fix modifier key layout (swap Option ↔ Command to match PC keyboard positions):
-
-```bash
-# Apply immediately
-echo 1 | sudo tee /sys/module/hid_apple/parameters/swap_opt_cmd
-
-# Make permanent
-echo "options hid_apple swap_opt_cmd=1" | sudo tee /etc/modprobe.d/hid_apple.conf
-```
-
-## Useful Commands
-
-```bash
-# See recently installed packages
-grep "installed" /var/log/pacman.log | tail -50
-```
-
-## ProtonVPN
-
-The daemon runs as a systemd service (`proton-vpn-daemon`). Use the CLI after signing in once:
-
-```bash
-protonvpn signin              # sign in with Proton account
-protonvpn connect             # connect to fastest server
-protonvpn connect --country US  # connect to specific country
-protonvpn disconnect
-protonvpn status
-protonvpn servers             # list available servers
-```
+| App | Role |
+|-----|------|
+| `hyprland` | Wayland compositor and window manager |
+| `waybar` | Status bar (floating islands) |
+| `swaync` | Notification daemon and panel (`Super+N`) |
+| `rofi` | App launcher (`Alt+Space`), calculator (`Alt+C`) |
+| `kitty` | Terminal (`Super+T`) |
+| `nvim` | Editor (LazyVim) |
+| `yazi` | File manager (`Super+E`) |
+| `librewolf` | Browser (`Super+B`) |
+| `hyprpaper` | Wallpaper daemon |
+| `hyprshutdown` | Session exit menu (`Super+M`) |
+| `pavucontrol` | Audio device control (`Super+A`) |
+| `noisetorch` | Microphone noise suppression |
+| `signal-desktop` | Encrypted messaging (`Super+C`) |
+| `discord` | Chat and voice |
+| `vscodium` | Code editor |
+| `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
+| `flatpak` | Sandboxed app runtime |
 
 ## Theme
 
-[Tokyo Night](https://github.com/folke/tokyonight.nvim) across all components. Font: [Hack Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts).
+[Tokyo Night](https://github.com/folke/tokyonight.nvim) across all components.
+Font: [Hack Nerd Font Mono](https://github.com/ryanoasis/nerd-fonts).
 
-## Tools
+## Notes
 
-| Tool | Purpose |
-|------|---------|
-| `rofi` | App launcher (`Alt+Space`), calculator (`Alt+C`) |
-| `hyprpaper` | Wallpaper daemon |
-| `hyprshutdown` | Session exit menu |
-| `waybar` | Status bar (floating islands) |
-| `swaync` | Notification daemon + panel |
-| `kitty` | Terminal (`Super+T`) |
-| `pavucontrol` | Audio device control (`Super+A`) |
-| `noisetorch` | Microphone noise suppression |
-| `yazi` | File manager (`Super+E`) |
-| `librewolf` | Browser (`Super+B`) |
-| `discord` | Chat / voice |
-| `signal-desktop` | Encrypted messaging (`Super+C`) |
-| `flatpak` | Sandboxed app runtime |
-| `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
-| `vscodium` | Code editor |
+Setup runbook for Bluetooth keyboard, ProtonVPN, and handy commands lives in
+[NOTES.md](NOTES.md).
