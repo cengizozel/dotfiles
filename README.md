@@ -6,23 +6,6 @@ My Arch Linux dotfiles.
 
 `aerospace.toml` is the config for [AeroSpace](https://github.com/nikitabobko/AeroSpace), a tiling window manager for macOS. It's stored here to keep all my dotfiles in one place.
 
-## Fresh Install
-
-Run this on a base Arch install with `sudo` configured:
-
-```bash
-bash <(curl -s https://raw.githubusercontent.com/cengizozel/dotfiles/main/install.sh)
-```
-
-This will:
-1. Install `yay` (AUR helper)
-2. Install all packages (skips any already installed)
-3. Clone this repo to `~/dotfiles`
-4. Link configs into place
-5. Enable NetworkManager and SDDM
-
-Reboot after it finishes.
-
 ## Contents
 
 | Repo path | System path |
@@ -36,7 +19,6 @@ Reboot after it finishes.
 | `waybar/scripts/` | `~/.config/waybar/scripts/` |
 | `waybar/layouts/` | `~/.config/waybar/layouts/` |
 | `waybar/colors/` | `~/.config/waybar/colors/` |
-| `waybar/context/` | `~/.config/waybar/context/` |
 | `swaync/config.json` | `~/.config/swaync/config.json` |
 | `swaync/style.css` | `~/.config/swaync/style.css` |
 | `kitty/kitty.conf` | `~/.config/kitty/kitty.conf` |
@@ -46,8 +28,6 @@ Reboot after it finishes.
 | `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `librewolf/userChrome.css` | `~/.config/librewolf/librewolf/<profile>/chrome/userChrome.css` |
-| `librewolf/sidebery-data.json` | Sidebery backup — restore via Sidebery Settings → Import |
-| `install.sh` | — bootstrap script for fresh installs |
 | `aerospace.toml` | `~/.config/aerospace/aerospace.toml` (macOS) |
 
 ## Apple Magic Keyboard (Bluetooth)
@@ -117,6 +97,5 @@ protonvpn servers             # list available servers
 | `discord` | Chat / voice |
 | `signal-desktop` | Encrypted messaging (`Super+C`) |
 | `flatpak` | Sandboxed app runtime |
-| `ollama` | Local LLM runner (CUDA) |
 | `proton-vpn-cli` | ProtonVPN CLI (`protonvpn`) |
 | `vscodium` | Code editor |
