@@ -27,10 +27,10 @@ git clone https://github.com/cengizozel/dotfiles.git
 | `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `librewolf/userChrome.css` | `~/.config/librewolf/librewolf/<profile>/chrome/userChrome.css` |
-| `aerospace.toml` | `~/.aerospace.toml` (macOS, see note below) |
 
-`aerospace.toml` is for [AeroSpace](https://github.com/nikitabobko/AeroSpace), a
-tiling window manager for macOS. It is kept here so all configs live in one place.
+The `mac/` folder holds the macOS-specific configs: an
+[AeroSpace](https://github.com/nikitabobko/AeroSpace) tiling window manager config
+and a kitty `local.conf` with Mac-only overrides, kept here so all configs live in one place.
 
 ## Keybinds
 
