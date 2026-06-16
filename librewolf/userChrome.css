@@ -359,3 +359,17 @@ hbox#nav-bar-customization-target {
 .titlebar-buttonbox{
    margin-bottom: -40px !important;
 }
+
+/* macOS only: the close/min/max traffic-light buttons live in the top-left and
+   overlap the full-width URL bar. On Linux there are no window buttons, so this
+   block is skipped there (Firefox -moz-platform media query). */
+@media (-moz-platform: macos) {
+   /* keep the buttons in their native top-left position, not shifted onto the bar */
+   .titlebar-buttonbox {
+      margin-bottom: 0 !important;
+   }
+   /* push the nav-bar content clear of the traffic lights */
+   hbox#nav-bar-customization-target {
+      padding-left: 88px !important;
+   }
+}
