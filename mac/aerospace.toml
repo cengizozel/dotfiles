@@ -32,6 +32,7 @@ automatically-unhide-macos-hidden-apps = false
 [mode.main.binding]
     alt-slash = 'layout tiles horizontal vertical'
     alt-comma = 'layout accordion horizontal vertical'
+    alt-v = 'layout floating tiling'                    # toggle floating/tiling
 
     alt-h = 'focus left'
     alt-j = 'focus down'
