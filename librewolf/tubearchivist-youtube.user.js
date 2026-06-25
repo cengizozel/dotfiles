@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.12.0
+// @version      1.13.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -611,9 +611,9 @@ input:not(.yt-search input), select, textarea {
   // Add theme + thumbnail-size controls into TA's view-controls bar (the row with the
   // grid/list/table icons), so they're reachable without the Tampermonkey menu.
   const THUMB_SIZES = [240, 280, 320, 360];
-  function mkViewCtl(icon, title) {
+  function mkViewCtl(act, icon, title) {
     const b = document.createElement('span');
-    b.className = 'yt-ctl'; b.title = title;
+    b.className = 'yt-ctl'; b.dataset.ytAct = act; b.title = title;
     const i = document.createElement('i'); i.style.setProperty('--ico', icon);
     b.appendChild(i);
     return b;
@@ -621,20 +621,24 @@ input:not(.yt-search input), select, textarea {
   function enhanceViewControls() {
     document.querySelectorAll('.view-icons').forEach((bar) => {
       if (bar.querySelector('.yt-ctl')) return;
-      const themeBtn = mkViewCtl(ICON.theme, 'Toggle dark / light');
-      themeBtn.addEventListener('click', () => {
-        CFG.theme = CFG.theme === 'dark' ? 'light' : 'dark';
-        GM_setValue('theme', CFG.theme); applyStyle();
-      });
-      const sizeBtn = mkViewCtl(ICON.resize, `Thumbnail size: ${CFG.cardMinWidth}px`);
-      sizeBtn.addEventListener('click', () => {
-        CFG.cardMinWidth = THUMB_SIZES[(THUMB_SIZES.indexOf(CFG.cardMinWidth) + 1) % THUMB_SIZES.length];
-        GM_setValue('cardWidth', CFG.cardMinWidth); applyStyle();
-        sizeBtn.title = `Thumbnail size: ${CFG.cardMinWidth}px`;
-      });
-      bar.appendChild(themeBtn);
-      bar.appendChild(sizeBtn);
+      bar.appendChild(mkViewCtl('theme', ICON.theme, 'Toggle dark / light'));
+      bar.appendChild(mkViewCtl('size', ICON.resize, `Thumbnail size: ${CFG.cardMinWidth}px`));
     });
+  }
+  // Delegated click handler: a per-button listener can be lost when React replaces the
+  // controls bar (that's the "first click does nothing" symptom). One document-level
+  // listener handles clicks on any current-or-future .yt-ctl reliably.
+  function onCtlClick(e) {
+    const ctl = e.target.closest ? e.target.closest('.yt-ctl') : null;
+    if (!ctl) return;
+    if (ctl.dataset.ytAct === 'theme') {
+      CFG.theme = CFG.theme === 'dark' ? 'light' : 'dark';
+      GM_setValue('theme', CFG.theme); applyStyle();
+    } else if (ctl.dataset.ytAct === 'size') {
+      CFG.cardMinWidth = THUMB_SIZES[(THUMB_SIZES.indexOf(CFG.cardMinWidth) + 1) % THUMB_SIZES.length];
+      GM_setValue('cardWidth', CFG.cardMinWidth); applyStyle();
+      document.querySelectorAll('.yt-ctl[data-yt-act="size"]').forEach((b) => { b.title = `Thumbnail size: ${CFG.cardMinWidth}px`; });
+    }
   }
 
   /* ================= NAVIGATION / SEARCH ============= */
@@ -710,6 +714,7 @@ input:not(.yt-search input), select, textarea {
   /* ================= BOOTSTRAP ====================== */
   applyStyle();          // at document-start, before first paint (kills the flash)
   registerMenu();
+  document.addEventListener('click', onCtlClick, true); // delegated controls (size/theme)
 
   function boot() {
     applyBodyFlags();
