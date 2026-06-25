@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.13.0
+// @version      1.14.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -50,8 +50,10 @@
     // Pull Roboto from Google Fonts for max YT fidelity. Default OFF for privacy
     // (LibreWolf) -> uses locally installed Roboto / Noto Sans / system sans.
     googleFonts: GM_getValue('googleFonts', false),
-    // grid card min width -> smaller = denser grid / smaller thumbnails (YT is ~360)
-    cardMinWidth: GM_getValue('cardWidth', 280),
+    // number of grid columns (fewer columns = bigger thumbnails). We set an explicit
+    // column count rather than a min-width, so every size step visibly changes the grid
+    // (a minmax()+1fr grid keeps the same look between column-count thresholds).
+    gridCols: GM_getValue('gridCols', 5),
     // flip TA's saved view mode to grid automatically (TA stores it server-side as list)
     forceGrid: GM_getValue('forceGrid', true),
     sidebarWidth: 240,
@@ -114,7 +116,8 @@
     const t = THEMES[CFG.theme] || THEMES.dark;
     const SW = CFG.sidebarWidth + 'px';
     const MH = CFG.mastheadHeight + 'px';
-    const CARD = CFG.cardMinWidth + 'px';
+    const COLS = CFG.gridCols;
+    const colsAt = (n) => Math.min(COLS, n); // cap columns on narrower screens
 
     const fontImport = CFG.googleFonts
       ? "@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');"
@@ -293,9 +296,13 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
 .video-list.grid,
 .video-list.grid.grid-2, .video-list.grid.grid-3, .video-list.grid.grid-4,
 .video-list.grid.grid-5, .video-list.grid.grid-6, .video-list.grid.grid-7 {
-  grid-template-columns: repeat(auto-fill, minmax(${CARD}, 1fr)) !important;
+  grid-template-columns: repeat(${COLS}, minmax(0, 1fr)) !important;
   grid-gap: 18px 14px !important;
 }
+/* cap columns on narrower windows (never more than the chosen count) */
+@media (max-width: 1280px) { .video-list.grid, body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(4)}, minmax(0,1fr)) !important; } }
+@media (max-width: 900px)  { .video-list.grid, body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(3)}, minmax(0,1fr)) !important; } }
+@media (max-width: 600px)  { .video-list.grid, body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(2)}, minmax(0,1fr)) !important; } }
 
 .video-item { background: transparent !important; border-radius: 12px; }
 .video-thumb-wrap, .video-thumb { border-radius: 12px; overflow: hidden; }
@@ -382,7 +389,7 @@ body.yt-downloads .video-tags span {
    TA stores the view mode server-side, so a CSS conversion guarantees a grid every load. */
 body.yt-force-grid .video-list.list {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(${CARD}, 1fr)) !important;
+  grid-template-columns: repeat(${COLS}, minmax(0, 1fr)) !important;
   grid-gap: 18px 14px !important;
 }
 body.yt-force-grid .video-item.list {
@@ -438,12 +445,32 @@ input:not(.yt-search input), select, textarea {
 .player-title .thumb-icon img { width: 22px !important; }
 .player-stats { float: none !important; display: flex !important; gap: 12px; margin-top: 6px !important; }
 .player-stats span { color: ${t.text2} !important; margin: 0 !important; }
-.description-box, .comments-section, .info-box-item, .notification, .playlist-wrap, .icon-text, .settings-group {
+.description-box, .info-box-item, .notification, .playlist-wrap, .icon-text, .settings-group {
   border-radius: 12px !important;
 }
-.description-box, .comments-section { background: ${t.surface} !important; }
-.comment-box h3 { font-weight: 500; }
+.description-box { background: ${t.surface} !important; }
 .timestamp-link { color: #3ea6ff !important; }
+
+/* comments -> YouTube style: no grey box; letter-avatar + author/time + text + meta;
+   replies toggle as a blue text button; replies indented under the comment. */
+.comments-section { background: transparent !important; border-radius: 0 !important; padding: 0 !important; margin-top: 24px !important; }
+.comments-section > h2 { font-size: 1.5rem !important; font-weight: 700; margin-bottom: 16px; }
+.comment-box { display: grid !important; grid-template-columns: 40px 1fr; column-gap: 14px; row-gap: 2px; padding: 14px 0 !important; align-items: start; }
+.comment-box > .yt-avatar { grid-column: 1; grid-row: 1 / -1; align-self: start; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 1.05rem; user-select: none; }
+.comment-box > :not(.yt-avatar) { grid-column: 2; min-width: 0; }
+.comment-box h3 { font-size: .85rem !important; font-weight: 500 !important; color: ${t.text} !important; text-transform: none !important; margin: 0 !important; line-break: normal !important; }
+.comment-highlight { background: ${t.chip} !important; color: ${t.text} !important; padding: 2px 8px !important; border-radius: 8px; width: fit-content; }
+.comment-box > p { color: ${t.text} !important; margin: 2px 0 6px 0 !important; line-height: 1.45; }
+.comment-meta { color: ${t.text2} !important; font-size: .8rem; display: flex !important; align-items: center; gap: 6px; }
+.comment-meta span, .comment-meta .thumb-icon { color: ${t.text2} !important; }
+.comment-meta .thumb-icon img { width: 16px !important; }
+.comment-like img { filter: var(--img-filter) !important; }
+.comment-box > button { background: transparent !important; color: #3ea6ff !important; font-weight: 600 !important; padding: 6px 12px !important; border-radius: 18px !important; margin-top: 2px; width: fit-content; }
+.comment-box > button:hover { background: rgba(62,166,255,.14) !important; color: #3ea6ff !important; transform: none !important; }
+[id="toggle-icon"] { font-size: .7em; margin-right: 5px; }
+.comments-replies { border-left: none !important; padding-left: 0 !important; margin-top: 4px !important; }
+.comments-replies .comment-box { grid-template-columns: 32px 1fr; }
+.comments-replies .yt-avatar { width: 32px !important; height: 32px !important; font-size: .9rem !important; }
 
 /* info boxes / stats tiles */
 .info-box-item { background: ${t.surface} !important; }
@@ -451,6 +478,11 @@ input:not(.yt-search input), select, textarea {
 /* ---- 9. PAGINATION / MISC ---- */
 .pagination-item { border-radius: 18px !important; border-color: ${t.border} !important; }
 .view-icons img, .grid-count img { filter: var(--img-filter); }
+
+/* with force-grid on, TA's view-mode toggles (grid/list/table) and the column +/- are
+   redundant -> hide them; keep my injected controls, plus filter/sort. */
+body.yt-force-grid .view-icons img { display: none !important; }
+body.yt-force-grid .grid-count { display: none !important; }
 
 /* in-page controls injected into the view-controls bar (theme + thumbnail size) */
 .view-icons .yt-ctl { display: inline-grid; place-items: center; width: 32px; height: 32px; margin: 5px 4px; cursor: pointer; border-radius: 50%; }
@@ -608,9 +640,30 @@ input:not(.yt-search input), select, textarea {
     if (document.body) document.body.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
   }
 
+  // TA comments have no avatar data, so give each a YouTube-style letter avatar
+  // (initial + a stable colour derived from the author name).
+  function avatarColor(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360;
+    return `hsl(${h}, 42%, 45%)`;
+  }
+  function decorateComments() {
+    document.querySelectorAll('.comment-box').forEach((box) => {
+      if (box.querySelector(':scope > .yt-avatar')) return;
+      const h3 = box.querySelector(':scope > h3');
+      if (!h3) return;
+      const name = (h3.textContent || '').replace(/^@/, '').trim() || '?';
+      const av = document.createElement('div');
+      av.className = 'yt-avatar';
+      av.textContent = name.charAt(0).toUpperCase();
+      av.style.background = avatarColor(name);
+      box.insertBefore(av, box.firstChild);
+    });
+  }
+
   // Add theme + thumbnail-size controls into TA's view-controls bar (the row with the
   // grid/list/table icons), so they're reachable without the Tampermonkey menu.
-  const THUMB_SIZES = [240, 280, 320, 360];
+  const THUMB_COLS = [6, 5, 4, 3]; // fewer columns -> bigger thumbnails; cycle wraps to smallest
   function mkViewCtl(act, icon, title) {
     const b = document.createElement('span');
     b.className = 'yt-ctl'; b.dataset.ytAct = act; b.title = title;
@@ -622,7 +675,7 @@ input:not(.yt-search input), select, textarea {
     document.querySelectorAll('.view-icons').forEach((bar) => {
       if (bar.querySelector('.yt-ctl')) return;
       bar.appendChild(mkViewCtl('theme', ICON.theme, 'Toggle dark / light'));
-      bar.appendChild(mkViewCtl('size', ICON.resize, `Thumbnail size: ${CFG.cardMinWidth}px`));
+      bar.appendChild(mkViewCtl('size', ICON.resize, `Thumbnail size (${CFG.gridCols} columns)`));
     });
   }
   // Delegated click handler: a per-button listener can be lost when React replaces the
@@ -635,9 +688,9 @@ input:not(.yt-search input), select, textarea {
       CFG.theme = CFG.theme === 'dark' ? 'light' : 'dark';
       GM_setValue('theme', CFG.theme); applyStyle();
     } else if (ctl.dataset.ytAct === 'size') {
-      CFG.cardMinWidth = THUMB_SIZES[(THUMB_SIZES.indexOf(CFG.cardMinWidth) + 1) % THUMB_SIZES.length];
-      GM_setValue('cardWidth', CFG.cardMinWidth); applyStyle();
-      document.querySelectorAll('.yt-ctl[data-yt-act="size"]').forEach((b) => { b.title = `Thumbnail size: ${CFG.cardMinWidth}px`; });
+      CFG.gridCols = THUMB_COLS[(THUMB_COLS.indexOf(CFG.gridCols) + 1) % THUMB_COLS.length];
+      GM_setValue('gridCols', CFG.gridCols); applyStyle();
+      document.querySelectorAll('.yt-ctl[data-yt-act="size"]').forEach((b) => { b.title = `Thumbnail size (${CFG.gridCols} columns)`; });
     }
   }
 
@@ -696,11 +749,11 @@ input:not(.yt-search input), select, textarea {
       () => { CFG.forceGrid = !CFG.forceGrid; GM_setValue('forceGrid', CFG.forceGrid); applyBodyFlags(); refreshMenu(); }
     );
     GM_registerMenuCommand(
-      `🖼️ Thumbnail size: ${CFG.cardMinWidth}px (click to cycle)`,
+      `🖼️ Thumbnail size: ${CFG.gridCols} columns (click to cycle)`,
       () => {
-        const sizes = [240, 280, 320, 360];
-        const next = sizes[(sizes.indexOf(CFG.cardMinWidth) + 1) % sizes.length];
-        CFG.cardMinWidth = next; GM_setValue('cardWidth', next); applyStyle(); refreshMenu();
+        const cols = [6, 5, 4, 3];
+        CFG.gridCols = cols[(cols.indexOf(CFG.gridCols) + 1) % cols.length];
+        GM_setValue('gridCols', CFG.gridCols); applyStyle(); refreshMenu();
       }
     );
     GM_registerMenuCommand(
@@ -722,6 +775,7 @@ input:not(.yt-search input), select, textarea {
     enhanceMasthead();
     decorateSidebar();
     decorateCards();
+    decorateComments();
     enhanceViewControls();
     tagSubscribe();
   }
@@ -745,6 +799,7 @@ input:not(.yt-search input), select, textarea {
       enhanceMasthead();
       decorateSidebar();
       decorateCards();
+      decorateComments();
       enhanceViewControls();
       tagSubscribe();
     });
