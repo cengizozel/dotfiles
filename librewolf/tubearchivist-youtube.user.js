@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.10.0
+// @version      1.11.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -310,17 +310,21 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
 }
 .video-item:hover .video-item-select-wrapper { opacity: 1; }
 
-/* TA's tag chip popped over the thumbnail on hover (.video-tags span uses
-   --accent-font-light = white) -> the stray white rectangle. Hide that overlay and
-   relocate the tags into the card body as clean chips (decorateCards clones them),
-   so the feature is moved, not removed. */
+/* TA's .video-tags are status/type badges (queued/ignored, vid_type, auto). They're only
+   meaningful on the Downloads page (elsewhere the queued/ignored state reads wrong), so:
+   - hide them globally,
+   - on Downloads keep them at the original top-left thumbnail spot, ALWAYS visible (no
+     hover), restyled as slick dark chips instead of TA's white hover box. */
 .video-tags { display: none !important; }
-.yt-tags { order: 3; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; width: 100%; }
-.yt-tags span {
-  background: ${t.chip} !important; color: ${t.text2} !important;
-  border-radius: 8px; padding: 3px 10px; font-size: .75rem; line-height: 1.4; cursor: default;
+body.yt-downloads .video-tags {
+  display: flex !important; opacity: 1 !important; flex-wrap: wrap; gap: 4px;
+  top: 8px; left: 8px; padding: 0 !important; max-width: calc(100% - 16px);
 }
-.yt-tags span:hover { background: ${t.chipHover} !important; color: ${t.text} !important; }
+body.yt-downloads .video-tags span {
+  background: rgba(0,0,0,.78) !important; color: #fff !important;
+  border-radius: 6px; padding: 3px 7px !important; font-size: .7rem; font-weight: 500;
+  line-height: 1.3; text-transform: capitalize;
+}
 
 /* desc block: drop the grey box, real YT type, stacked */
 .video-desc.grid {
@@ -584,20 +588,13 @@ input:not(.yt-search input), select, textarea {
         const rel = relativeTime(datePart) || datePart;
         if (span.textContent !== rel) span.textContent = rel;
       }
-      // relocate TA's thumbnail tags into the card body as chips (overlay hidden in CSS)
-      const desc = item.querySelector('.video-desc');
-      const srcTags = item.querySelector('.video-tags');
-      if (desc && srcTags && !desc.querySelector('.yt-tags')) {
-        const labels = Array.from(srcTags.querySelectorAll('span'))
-          .map((s) => (s.textContent || '').trim()).filter(Boolean);
-        if (labels.length) {
-          const box = document.createElement('div');
-          box.className = 'yt-tags';
-          labels.forEach((txt) => { const c = document.createElement('span'); c.textContent = txt; box.appendChild(c); });
-          desc.appendChild(box);
-        }
-      }
     });
+  }
+
+  // Tag the body with the current route so CSS can scope page-specific tweaks
+  // (e.g. the status badges only make sense on /downloads/).
+  function applyRoute() {
+    if (document.body) document.body.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
   }
 
   /* ================= NAVIGATION / SEARCH ============= */
@@ -676,6 +673,7 @@ input:not(.yt-search input), select, textarea {
 
   function boot() {
     applyBodyFlags();
+    applyRoute();
     enhanceMasthead();
     decorateSidebar();
     decorateCards();
@@ -697,6 +695,7 @@ input:not(.yt-search input), select, textarea {
     requestAnimationFrame(() => {
       pending = false;
       if (document.head && !document.head.querySelector('#yt-skin-style')) applyStyle();
+      applyRoute();
       enhanceMasthead();
       decorateSidebar();
       decorateCards();
