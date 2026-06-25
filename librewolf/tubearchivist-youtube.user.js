@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.14.0
+// @version      1.15.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -445,6 +445,10 @@ input:not(.yt-search input), select, textarea {
 .player-title .thumb-icon img { width: 22px !important; }
 .player-stats { float: none !important; display: flex !important; gap: 12px; margin-top: 6px !important; }
 .player-stats span { color: ${t.text2} !important; margin: 0 !important; }
+/* the "no sponsor segments added" notice -> tuck away small + dim; reveal on hover */
+.sponsorblock, #sponsorblock { font-size: .68rem !important; opacity: .38; transition: opacity .15s ease; }
+.sponsorblock:hover, #sponsorblock:hover { opacity: .85; }
+.sponsorblock h4, .sponsorblock a, .sponsorblock p { font-size: .68rem !important; }
 .description-box, .info-box-item, .notification, .playlist-wrap, .icon-text, .settings-group {
   border-radius: 12px !important;
 }
@@ -479,9 +483,11 @@ input:not(.yt-search input), select, textarea {
 .pagination-item { border-radius: 18px !important; border-color: ${t.border} !important; }
 .view-icons img, .grid-count img { filter: var(--img-filter); }
 
-/* with force-grid on, TA's view-mode toggles (grid/list/table) and the column +/- are
-   redundant -> hide them; keep my injected controls, plus filter/sort. */
-body.yt-force-grid .view-icons img { display: none !important; }
+/* with force-grid on, only the view-MODE toggles (grid/list/table) and the column +/- are
+   redundant -> hide just those by icon src; keep filter, sort, and my injected controls. */
+body.yt-force-grid .view-icons img[src*="gridview" i],
+body.yt-force-grid .view-icons img[src*="listview" i],
+body.yt-force-grid .view-icons img[src*="tableview" i] { display: none !important; }
 body.yt-force-grid .grid-count { display: none !important; }
 
 /* in-page controls injected into the view-controls bar (theme + thumbnail size) */
