@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.8.0
+// @version      1.9.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -309,6 +309,11 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
   opacity: 0; transition: opacity .15s ease;
 }
 .video-item:hover .video-item-select-wrapper { opacity: 1; }
+
+/* TA shows a white tag chip overlay on the thumbnail on hover (.video-tags span uses
+   --accent-font-light = white) -> that was the stray white rectangle. YT has no such
+   overlay, so hide it (tags still show on the video page). */
+.video-tags { display: none !important; }
 
 /* desc block: drop the grey box, real YT type, stacked */
 .video-desc.grid {
