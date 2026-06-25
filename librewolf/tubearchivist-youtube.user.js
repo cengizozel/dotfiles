@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.11.0
+// @version      1.12.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -72,6 +72,8 @@
     downloads:svg('M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'),
     menu:    svg('M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z'),
     search:  svg('M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'),
+    theme:   svg('M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18V6c3.31 0 6 2.69 6 6s-2.69 6-6 6z'),
+    resize:  svg('M19 12h-2v3h-3v2h5v-5zM7 9h3V7H5v5h2V9zm14-6H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16.01H3V4.99h18v14.02z'),
   };
 
   /* ====================== THEMES ======================= */
@@ -269,11 +271,14 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
 .boxed-content:has(.top-nav) { padding: 0 !important; }
 /* routed page content: inset past the fixed sidebar (every other boxed-content child) */
 .main-content > .boxed-content:not(:has(.top-nav)) { margin-left: ${SW} !important; }
+/* the inline (?videoId=) player on home/channel is a full-width .player-wrapper sibling -> inset it too */
+.main-content > .player-wrapper { margin-left: ${SW} !important; }
 
 /* sidebar hidden (hamburger or menu): slide the rail off-screen and expand the content.
    The masthead logo/search/icons are independent, so they always stay put. */
 body.yt-hide-sidebar .nav-items { transform: translateX(-100%); }
 body.yt-hide-sidebar .main-content > .boxed-content:not(:has(.top-nav)),
+body.yt-hide-sidebar .main-content > .player-wrapper,
 body.yt-hide-sidebar .footer { margin-left: 0 !important; }
 
 /* ---- 6. VIDEO GRID -> YouTube cards ----
@@ -446,6 +451,12 @@ input:not(.yt-search input), select, textarea {
 /* ---- 9. PAGINATION / MISC ---- */
 .pagination-item { border-radius: 18px !important; border-color: ${t.border} !important; }
 .view-icons img, .grid-count img { filter: var(--img-filter); }
+
+/* in-page controls injected into the view-controls bar (theme + thumbnail size) */
+.view-icons .yt-ctl { display: inline-grid; place-items: center; width: 32px; height: 32px; margin: 5px 4px; cursor: pointer; border-radius: 50%; }
+.view-icons .yt-ctl:hover { background: ${t.chip}; }
+.view-icons .yt-ctl i { width: 22px; height: 22px; display: block; background: ${t.text};
+  -webkit-mask: var(--ico) center / 22px 22px no-repeat; mask: var(--ico) center / 22px 22px no-repeat; }
 .footer { background: ${t.bg} !important; border-top: 1px solid ${t.border}; }
 .footer-colors { display: none !important; }
 
@@ -597,6 +608,35 @@ input:not(.yt-search input), select, textarea {
     if (document.body) document.body.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
   }
 
+  // Add theme + thumbnail-size controls into TA's view-controls bar (the row with the
+  // grid/list/table icons), so they're reachable without the Tampermonkey menu.
+  const THUMB_SIZES = [240, 280, 320, 360];
+  function mkViewCtl(icon, title) {
+    const b = document.createElement('span');
+    b.className = 'yt-ctl'; b.title = title;
+    const i = document.createElement('i'); i.style.setProperty('--ico', icon);
+    b.appendChild(i);
+    return b;
+  }
+  function enhanceViewControls() {
+    document.querySelectorAll('.view-icons').forEach((bar) => {
+      if (bar.querySelector('.yt-ctl')) return;
+      const themeBtn = mkViewCtl(ICON.theme, 'Toggle dark / light');
+      themeBtn.addEventListener('click', () => {
+        CFG.theme = CFG.theme === 'dark' ? 'light' : 'dark';
+        GM_setValue('theme', CFG.theme); applyStyle();
+      });
+      const sizeBtn = mkViewCtl(ICON.resize, `Thumbnail size: ${CFG.cardMinWidth}px`);
+      sizeBtn.addEventListener('click', () => {
+        CFG.cardMinWidth = THUMB_SIZES[(THUMB_SIZES.indexOf(CFG.cardMinWidth) + 1) % THUMB_SIZES.length];
+        GM_setValue('cardWidth', CFG.cardMinWidth); applyStyle();
+        sizeBtn.title = `Thumbnail size: ${CFG.cardMinWidth}px`;
+      });
+      bar.appendChild(themeBtn);
+      bar.appendChild(sizeBtn);
+    });
+  }
+
   /* ================= NAVIGATION / SEARCH ============= */
   // Use TA's own React-Router links so we stay a SPA (no full reload).
   function spaNavigate(path) {
@@ -677,6 +717,7 @@ input:not(.yt-search input), select, textarea {
     enhanceMasthead();
     decorateSidebar();
     decorateCards();
+    enhanceViewControls();
     tagSubscribe();
   }
 
@@ -699,6 +740,7 @@ input:not(.yt-search input), select, textarea {
       enhanceMasthead();
       decorateSidebar();
       decorateCards();
+      enhanceViewControls();
       tagSubscribe();
     });
   });
