@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.9.0
+// @version      1.10.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -178,7 +178,7 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
 }
 .yt-burger:hover { background: ${t.chip} !important; }
 .yt-burger i {
-  width: 100%; height: 100%; display: block; background: ${t.text};
+  width: 100%; height: 100%; display: block; margin: 0 !important; background: ${t.text};
   -webkit-mask: ${ICON.menu} center / 24px 24px no-repeat; mask: ${ICON.menu} center / 24px 24px no-repeat;
 }
 .yt-logo { display: flex; align-items: center; height: 40px; gap: 5px; cursor: pointer; user-select: none; padding: 0 6px; line-height: 1; }
@@ -215,8 +215,8 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
 }
 .yt-search button:hover { background: ${t.chipHover} !important; }
 .yt-search button i {
-  width: 22px; height: 22px; display: block; background: ${t.text};
-  -webkit-mask: ${ICON.search} center/22px no-repeat; mask: ${ICON.search} center/22px no-repeat;
+  width: 22px; height: 22px; display: block; margin: 0 !important; background: ${t.text};
+  -webkit-mask: ${ICON.search} center / 22px 22px no-repeat; mask: ${ICON.search} center / 22px 22px no-repeat;
 }
 
 /* TA's own right-side icons (search/gear/logout) -> YT account buttons */
@@ -310,10 +310,17 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
 }
 .video-item:hover .video-item-select-wrapper { opacity: 1; }
 
-/* TA shows a white tag chip overlay on the thumbnail on hover (.video-tags span uses
-   --accent-font-light = white) -> that was the stray white rectangle. YT has no such
-   overlay, so hide it (tags still show on the video page). */
+/* TA's tag chip popped over the thumbnail on hover (.video-tags span uses
+   --accent-font-light = white) -> the stray white rectangle. Hide that overlay and
+   relocate the tags into the card body as clean chips (decorateCards clones them),
+   so the feature is moved, not removed. */
 .video-tags { display: none !important; }
+.yt-tags { order: 3; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; width: 100%; }
+.yt-tags span {
+  background: ${t.chip} !important; color: ${t.text2} !important;
+  border-radius: 8px; padding: 3px 10px; font-size: .75rem; line-height: 1.4; cursor: default;
+}
+.yt-tags span:hover { background: ${t.chipHover} !important; color: ${t.text} !important; }
 
 /* desc block: drop the grey box, real YT type, stacked */
 .video-desc.grid {
@@ -561,20 +568,35 @@ input:not(.yt-search input), select, textarea {
     document.querySelectorAll('.video-item').forEach((item) => {
       const wrap = item.querySelector('.video-thumb-wrap');
       const span = item.querySelector('.video-desc-player span');
-      if (!wrap || !span) return;
-      const raw = span.dataset.ytRaw || span.textContent || '';
-      if (raw && !span.dataset.ytRaw) span.dataset.ytRaw = raw;
-      const bar = raw.indexOf('|');
-      const datePart = (bar >= 0 ? raw.slice(0, bar) : raw).trim();
-      const durPart = bar >= 0 ? raw.slice(bar + 1).trim() : '';
-      if (durPart) {
-        let badge = wrap.querySelector('.yt-dur');
-        if (!badge) { badge = document.createElement('span'); badge.className = 'yt-dur'; wrap.appendChild(badge); }
-        const clock = durToClock(durPart);
-        if (badge.textContent !== clock) badge.textContent = clock;
+      // duration badge + relative upload time (only when the meta span exists)
+      if (wrap && span) {
+        const raw = span.dataset.ytRaw || span.textContent || '';
+        if (raw && !span.dataset.ytRaw) span.dataset.ytRaw = raw;
+        const bar = raw.indexOf('|');
+        const datePart = (bar >= 0 ? raw.slice(0, bar) : raw).trim();
+        const durPart = bar >= 0 ? raw.slice(bar + 1).trim() : '';
+        if (durPart) {
+          let badge = wrap.querySelector('.yt-dur');
+          if (!badge) { badge = document.createElement('span'); badge.className = 'yt-dur'; wrap.appendChild(badge); }
+          const clock = durToClock(durPart);
+          if (badge.textContent !== clock) badge.textContent = clock;
+        }
+        const rel = relativeTime(datePart) || datePart;
+        if (span.textContent !== rel) span.textContent = rel;
       }
-      const rel = relativeTime(datePart) || datePart;
-      if (span.textContent !== rel) span.textContent = rel;
+      // relocate TA's thumbnail tags into the card body as chips (overlay hidden in CSS)
+      const desc = item.querySelector('.video-desc');
+      const srcTags = item.querySelector('.video-tags');
+      if (desc && srcTags && !desc.querySelector('.yt-tags')) {
+        const labels = Array.from(srcTags.querySelectorAll('span'))
+          .map((s) => (s.textContent || '').trim()).filter(Boolean);
+        if (labels.length) {
+          const box = document.createElement('div');
+          box.className = 'yt-tags';
+          labels.forEach((txt) => { const c = document.createElement('span'); c.textContent = txt; box.appendChild(c); });
+          desc.appendChild(box);
+        }
+      }
     });
   }
 
