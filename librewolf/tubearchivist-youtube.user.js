@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.16.0
+// @version      1.17.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -492,7 +492,7 @@ body.yt-watching .player-title { padding-left: 0 !important; padding-right: 0 !i
 /* theater toggle button injected into the player title bar */
 .player-title .yt-theater-btn { position: absolute; top: 12px; right: 40px; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; border-radius: 50%; }
 .player-title .yt-theater-btn:hover, body.yt-theater .player-title .yt-theater-btn { background: ${t.chip}; }
-.player-title .yt-theater-btn i { width: 24px; height: 24px; display: block; background: ${t.text}; -webkit-mask: ${ICON.widescreen} center / 24px 24px no-repeat; mask: ${ICON.widescreen} center / 24px 24px no-repeat; }
+.player-title .yt-theater-btn i { width: 24px; height: 24px; display: block; margin: 0 !important; background: ${t.text}; -webkit-mask: ${ICON.widescreen} center / 24px 24px no-repeat; mask: ${ICON.widescreen} center / 24px 24px no-repeat; }
 
 /* TWO-COLUMN: a video is open and theater is off */
 body.yt-watching:not(.yt-theater) .main-content {
@@ -541,7 +541,7 @@ body.yt-force-grid .grid-count { display: none !important; }
 .view-icons img { width: 24px !important; height: 32px !important; object-fit: contain; margin: 0 8px !important; }
 .view-icons .yt-ctl { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 32px; margin: 0 2px; cursor: pointer; border-radius: 50%; }
 .view-icons .yt-ctl:hover { background: ${t.chip}; }
-.view-icons .yt-ctl i { width: 22px; height: 22px; display: block; background: ${t.text};
+.view-icons .yt-ctl i { width: 22px; height: 22px; display: block; margin: 0 !important; background: ${t.text};
   -webkit-mask: var(--ico) center / 22px 22px no-repeat; mask: var(--ico) center / 22px 22px no-repeat; }
 .footer { background: ${t.bg} !important; border-top: 1px solid ${t.border}; }
 .footer-colors { display: none !important; }
