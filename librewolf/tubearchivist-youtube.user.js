@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.25.2
+// @version      1.26.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -321,6 +321,19 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
 .view-controls { border: none !important; margin: 8px 0 4px 0 !important; }
 .title-bar { padding-top: 12px !important; }
 .title-bar h1 { font-size: 1.6em !important; font-weight: 700; }
+
+/* put a section header and its view-controls on the SAME row, and tighten the spacing.
+   Scoped to containers that actually have a view-controls (list pages), so it never
+   touches the masthead or the /video page. */
+.boxed-content:has(> .view-controls) {
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 12px; row-gap: 6px;
+}
+.boxed-content:has(> .view-controls) > * { grid-column: 1 / -1; min-width: 0; }   /* span + allow shrink (no overflow) */
+.boxed-content:has(> .view-controls) > .title-bar { grid-column: 1; padding-top: 8px !important; }
+.boxed-content:has(> .view-controls) > .view-controls { grid-column: 2; margin: 0 !important; }
 
 /* denser, smaller-than-YouTube cards: override TA's fixed grid-N column counts with a
    responsive auto-fill so the column count follows the window and thumbnails stay compact */
