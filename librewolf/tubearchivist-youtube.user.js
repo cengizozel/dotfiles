@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.25.0
+// @version      1.25.1
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -74,7 +74,8 @@
     // number of grid columns (fewer columns = bigger thumbnails). We set an explicit
     // column count rather than a min-width, so every size step visibly changes the grid
     // (a minmax()+1fr grid keeps the same look between column-count thresholds).
-    gridCols: GM_getValue('gridCols', 5),
+    // Coerced to a sane integer so a tampered stored value can't be injected into the CSS.
+    gridCols: (() => { const n = parseInt(GM_getValue('gridCols', 5), 10); return (n >= 1 && n <= 8) ? n : 5; })(),
     // flip TA's saved view mode to grid automatically (TA stores it server-side as list)
     forceGrid: GM_getValue('forceGrid', true),
     // open the full /video/<id> page on thumbnail click (comments + description),
@@ -842,11 +843,15 @@ body.yt-force-grid .grid-count { display: none !important; }
     if (!link) return;
     const href = link.getAttribute('href');
     if (!href) return;
+    // only navigate to a same-origin /video/ path (rejects javascript:, cross-origin, //evil, ...)
+    let url;
+    try { url = new URL(href, location.origin); } catch (_) { return; }
+    if (url.origin !== location.origin || !url.pathname.startsWith('/video/')) return;
     // beat TA's own onClick (which would set ?videoId=) and go straight to the clean URL
     e.preventDefault();
     e.stopPropagation();
     if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-    location.assign(href);
+    location.assign(url.pathname + url.search);
   }
 
   /* ================= NAVIGATION / SEARCH ============= */
