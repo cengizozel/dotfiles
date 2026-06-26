@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.18.1
+// @version      1.19.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -72,9 +72,9 @@
     gridCols: GM_getValue('gridCols', 5),
     // flip TA's saved view mode to grid automatically (TA stores it server-side as list)
     forceGrid: GM_getValue('forceGrid', true),
-    // watch page: opt-in two-column (videos in a right rail). Off until the live watch
-    // DOM is matched correctly; theater = within two-column, push videos below instead.
-    twoColumn: GM_getValue('twoColumn', false),
+    // watch page: two-column (videos in a right rail). theater = within two-column,
+    // push videos below + widen the player (toggled by the in-player widescreen button).
+    twoColumn: GM_getValue('twoColumn', true),
     theater: GM_getValue('theater', false),
     sidebarWidth: 240,
     mastheadHeight: 56,
@@ -519,32 +519,35 @@ body.yt-watching .player-title { padding-left: 0 !important; padding-right: 0 !i
 .player-title .yt-theater-btn:hover, body.yt-theater .player-title .yt-theater-btn { background: ${t.chip}; }
 .player-title .yt-theater-btn i { width: 24px; height: 24px; display: block; margin: 0 !important; background: ${t.text}; -webkit-mask: ${ICON.widescreen} center / 24px 24px no-repeat; mask: ${ICON.widescreen} center / 24px 24px no-repeat; }
 
-/* TWO-COLUMN: a video is open and theater is off */
+/* TWO-COLUMN: a video is open and theater is off.
+   main-content is a 3-col grid [sidebar gutter | player | rail]. The player spans all
+   content rows so the rail's separate sections flow continuously down col 3 (no gaps). */
 body.yt-2col .main-content {
   display: grid !important;
   grid-template-columns: ${SW} minmax(0, 1fr) 400px;
   align-items: start;
 }
 body.yt-hide-sidebar.yt-2col .main-content { grid-template-columns: 0 minmax(0, 1fr) 400px; }
-/* default: every direct child spans full width (masthead, notifications, strays) ... */
-body.yt-2col .main-content > * { grid-column: 1 / -1; margin: 0 !important; }
-/* ... then place the two we want side by side */
-body.yt-2col .main-content > .player-wrapper { grid-column: 2; padding: 12px 24px 24px 24px; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 3; padding: 12px 24px 24px 0; }
-@media (max-width: 1150px) { /* too narrow for a rail -> fall back to single column */
+body.yt-2col .main-content > * { grid-column: 1 / -1; margin: 0 !important; }      /* masthead/strays full width */
+body.yt-2col .main-content > .boxed-content:has(.top-nav) { grid-row: 1; }
+body.yt-2col .main-content > .player-wrapper { grid-column: 2; grid-row: 2 / span 99; padding: 12px 24px 24px 24px; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 3; padding: 0 24px 14px 0; }
+@media (max-width: 1150px) { /* too narrow for a rail -> single column */
   body.yt-2col .main-content { grid-template-columns: 1fr !important; }
-  body.yt-2col .main-content > .player-wrapper,
+  body.yt-2col .main-content > .player-wrapper { grid-column: 1 !important; grid-row: auto !important; }
   body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 1 !important; }
 }
 
-/* right rail: hide its header/controls, single column of compact horizontal cards */
-body.yt-2col .boxed-content:not(:has(.top-nav)) > .title-bar,
-body.yt-2col .boxed-content:not(:has(.top-nav)) .view-controls { display: none !important; }
-body.yt-2col .boxed-content:not(:has(.top-nav)) .video-list { grid-template-columns: 1fr !important; gap: 10px !important; margin-top: 0 !important; }
-body.yt-2col .boxed-content:not(:has(.top-nav)) .video-item { display: grid !important; grid-template-columns: 168px 1fr !important; gap: 10px; }
-body.yt-2col .boxed-content:not(:has(.top-nav)) .video-desc.grid { padding: 0 !important; }
-body.yt-2col .boxed-content:not(:has(.top-nav)) .video-desc .video-more h2 { font-size: .92rem !important; }
-body.yt-2col .boxed-content:not(:has(.top-nav)) .video-desc-player { display: none !important; }
+/* right rail: small section headers, no view-controls, compact horizontal cards */
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .title-bar { padding: 10px 0 2px 0 !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .title-bar h1 { font-size: 1.05rem !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .view-controls { display: none !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-list { grid-template-columns: 1fr !important; gap: 14px !important; margin-top: 6px !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-item { background: transparent !important; display: block !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-thumb-wrap { width: 100% !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-thumb img { width: 100% !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-desc.grid { padding: 8px 0 0 0 !important; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-desc .video-more h2 { font-size: .95rem !important; }
 
 /* info boxes / stats tiles */
 .info-box-item { background: ${t.surface} !important; }
@@ -850,6 +853,10 @@ body.yt-force-grid .grid-count { display: none !important; }
     GM_registerMenuCommand(
       (CFG.forceGrid ? '▦ Force grid view (ON)' : '▤ Force grid view (OFF)'),
       () => { CFG.forceGrid = !CFG.forceGrid; GM_setValue('forceGrid', CFG.forceGrid); applyBodyFlags(); refreshMenu(); }
+    );
+    GM_registerMenuCommand(
+      (CFG.twoColumn ? '◫ Watch: two-column (ON)' : '▭ Watch: single column (OFF)'),
+      () => { CFG.twoColumn = !CFG.twoColumn; GM_setValue('twoColumn', CFG.twoColumn); applyRoute(); refreshMenu(); }
     );
     GM_registerMenuCommand(
       `🖼️ Thumbnail size: ${CFG.gridCols} columns (click to cycle)`,
