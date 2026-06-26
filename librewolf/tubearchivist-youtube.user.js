@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.19.0
+// @version      1.21.4
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -72,10 +72,9 @@
     gridCols: GM_getValue('gridCols', 5),
     // flip TA's saved view mode to grid automatically (TA stores it server-side as list)
     forceGrid: GM_getValue('forceGrid', true),
-    // watch page: two-column (videos in a right rail). theater = within two-column,
-    // push videos below + widen the player (toggled by the in-player widescreen button).
-    twoColumn: GM_getValue('twoColumn', true),
-    theater: GM_getValue('theater', false),
+    // open the full /video/<id> page on thumbnail click (comments + description),
+    // instead of TA's inline ?videoId= quick player (no comments). Like YouTube.
+    fullPageOnThumb: GM_getValue('fullPageOnThumb', true),
     sidebarWidth: 240,
     mastheadHeight: 56,
   };
@@ -96,7 +95,6 @@
     search:  svg('M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'),
     theme:   svg('M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18V6c3.31 0 6 2.69 6 6s-2.69 6-6 6z'),
     resize:  svg('M19 12h-2v3h-3v2h5v-5zM7 9h3V7H5v5h2V9zm14-6H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16.01H3V4.99h18v14.02z'),
-    widescreen: svg('M19 6H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H5V8h14v8z'),
   };
 
   /* ====================== THEMES ======================= */
@@ -260,6 +258,7 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
   display: flex !important; flex-direction: column; justify-content: flex-start !important;
   align-items: stretch; gap: 2px; padding: 12px !important;
   background: ${t.bg} !important; overflow-y: auto; z-index: 2000;
+  border-right: 1px solid ${t.border} !important;   /* greyish divider when the sidebar is shown */
   transition: transform .15s ease;
 }
 .nav-item {
@@ -456,20 +455,26 @@ input:not(.yt-search input), select, textarea {
 }
 
 /* ---- 8. WATCH PAGE ---- */
-.player-wrapper { background: #000 !important; border-radius: 12px; margin: 0 0 16px 0 !important; overflow: hidden; }
+/* TA makes .video-player 100vh + align-content:space-evenly, which shoves the title far
+   below the video. Let it size to its content so the title sits right under the video. */
+.video-player { height: auto !important; align-content: start !important; gap: 0 !important; }
+.video-main { margin: 0 !important; }
+/* player box follows the theme (was hard #000, which looked wrong in light mode) */
+.player-wrapper { background: ${t.bg} !important; border-radius: 12px; margin: 0 0 12px 0 !important; overflow: hidden; }
+.video-main, .video-player { background: ${t.bg} !important; }
 .player-wrapper.theater-mode { border-radius: 0; }
-.video-main video, .video-player video { border-radius: 0; }
-.player-title { padding-top: 12px !important; position: relative; }
+/* the <video> element's own letterbox bg is black by default -> theme it too */
+.video-main video, .video-player video { border-radius: 0; background: ${t.bg} !important; }
+.player-title { padding-top: 2px !important; position: relative; }
+.player-title > h3 { margin: 4px 0 6px 0 !important; }
 .player-title h3 { text-transform: none !important; font-size: 1.4rem !important; font-weight: 700; color: ${t.text} !important; width: 100%; }
 .player-title .close-button { position: absolute; top: 14px; right: 0; width: 24px !important; }
 .player-title .thumb-icon { display: inline-flex; align-items: center; }
 .player-title .thumb-icon img { width: 22px !important; }
 .player-stats { float: none !important; display: flex !important; gap: 12px; margin-top: 6px !important; }
 .player-stats span { color: ${t.text2} !important; margin: 0 !important; }
-/* the "no sponsor segments added" notice -> tuck away small + dim; reveal on hover */
-.sponsorblock, #sponsorblock { font-size: .68rem !important; opacity: .38; transition: opacity .15s ease; }
-.sponsorblock:hover, #sponsorblock:hover { opacity: .85; }
-.sponsorblock h4, .sponsorblock a, .sponsorblock p { font-size: .68rem !important; }
+/* hide the "no sponsor segments added" notice entirely */
+.sponsorblock, #sponsorblock { display: none !important; }
 .description-box, .info-box-item, .notification, .playlist-wrap, .icon-text, .settings-group {
   border-radius: 12px !important;
 }
@@ -496,58 +501,6 @@ input:not(.yt-search input), select, textarea {
 .comments-replies { border-left: none !important; padding-left: 0 !important; margin-top: 4px !important; }
 .comments-replies .comment-box { grid-template-columns: 32px 1fr; }
 .comments-replies .yt-avatar { width: 32px !important; height: 32px !important; font-size: .9rem !important; }
-
-/* ---- 8b. WATCH LAYOUT: two-column (player left, videos right rail); theater = videos below ---- */
-/* tame the inline player's full-viewport height + lay it out as a column so we can
-   reorder the SponsorBlock notice off the video's bottom edge */
-body.yt-watching .video-player { height: auto !important; padding: 0 !important; display: flex !important; flex-direction: column; }
-body.yt-watching .video-player video, body.yt-watching .video-main video { max-height: 78vh; }
-body.yt-watching .video-player > .video-main { order: 1; }
-body.yt-watching .video-player > .player-title { order: 2; }
-body.yt-watching .video-player > .description-box { order: 3; }
-body.yt-watching .video-player > .sponsorblock,
-body.yt-watching .video-player > #sponsorblock { order: 4; margin: 10px 0 0 0 !important; }
-body.yt-watching .video-player > .comments-section { order: 5; }
-/* the black rounded box belongs on the video, not the whole wrapper (which clipped the
-   title/description/comments text in theater mode) */
-body.yt-watching .player-wrapper { background: transparent !important; overflow: visible !important; border-radius: 0 !important; }
-body.yt-watching .video-main { background: #000 !important; border-radius: 12px; overflow: hidden; }
-body.yt-watching .player-title { padding-left: 0 !important; padding-right: 0 !important; }
-
-/* theater toggle button injected into the player title bar */
-.player-title .yt-theater-btn { position: absolute; top: 12px; right: 40px; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; border-radius: 50%; }
-.player-title .yt-theater-btn:hover, body.yt-theater .player-title .yt-theater-btn { background: ${t.chip}; }
-.player-title .yt-theater-btn i { width: 24px; height: 24px; display: block; margin: 0 !important; background: ${t.text}; -webkit-mask: ${ICON.widescreen} center / 24px 24px no-repeat; mask: ${ICON.widescreen} center / 24px 24px no-repeat; }
-
-/* TWO-COLUMN: a video is open and theater is off.
-   main-content is a 3-col grid [sidebar gutter | player | rail]. The player spans all
-   content rows so the rail's separate sections flow continuously down col 3 (no gaps). */
-body.yt-2col .main-content {
-  display: grid !important;
-  grid-template-columns: ${SW} minmax(0, 1fr) 400px;
-  align-items: start;
-}
-body.yt-hide-sidebar.yt-2col .main-content { grid-template-columns: 0 minmax(0, 1fr) 400px; }
-body.yt-2col .main-content > * { grid-column: 1 / -1; margin: 0 !important; }      /* masthead/strays full width */
-body.yt-2col .main-content > .boxed-content:has(.top-nav) { grid-row: 1; }
-body.yt-2col .main-content > .player-wrapper { grid-column: 2; grid-row: 2 / span 99; padding: 12px 24px 24px 24px; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 3; padding: 0 24px 14px 0; }
-@media (max-width: 1150px) { /* too narrow for a rail -> single column */
-  body.yt-2col .main-content { grid-template-columns: 1fr !important; }
-  body.yt-2col .main-content > .player-wrapper { grid-column: 1 !important; grid-row: auto !important; }
-  body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 1 !important; }
-}
-
-/* right rail: small section headers, no view-controls, compact horizontal cards */
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .title-bar { padding: 10px 0 2px 0 !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .title-bar h1 { font-size: 1.05rem !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .view-controls { display: none !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-list { grid-template-columns: 1fr !important; gap: 14px !important; margin-top: 6px !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-item { background: transparent !important; display: block !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-thumb-wrap { width: 100% !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-thumb img { width: 100% !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-desc.grid { padding: 8px 0 0 0 !important; }
-body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) .video-desc .video-more h2 { font-size: .95rem !important; }
 
 /* info boxes / stats tiles */
 .info-box-item { background: ${t.surface} !important; }
@@ -722,25 +675,6 @@ body.yt-force-grid .grid-count { display: none !important; }
     const b = document.body;
     if (!b) return;
     b.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
-    const watching = /[?&]videoId=/.test(location.search); // a video is open
-    b.classList.toggle('yt-watching', watching);
-    b.classList.toggle('yt-theater', !!CFG.theater);
-    b.classList.toggle('yt-2col', watching && CFG.twoColumn && !CFG.theater);
-  }
-
-  // Inject a theater-mode toggle into the player title bar (watch view).
-  function enhanceWatch() {
-    if (!CFG.twoColumn) return; // theater toggle only matters in two-column mode
-    const pt = document.querySelector('.player-title');
-    if (!pt || pt.querySelector('.yt-theater-btn')) return;
-    const btn = document.createElement('span');
-    btn.className = 'yt-theater-btn';
-    btn.dataset.ytAct = 'theater';
-    btn.title = 'Theater mode (videos below / on the side)';
-    const i = document.createElement('i');
-    i.style.setProperty('--ico', ICON.widescreen);
-    btn.appendChild(i);
-    pt.appendChild(btn);
   }
 
   // TA comments have no avatar data, so give each a YouTube-style letter avatar
@@ -794,10 +728,29 @@ body.yt-force-grid .grid-count { display: none !important; }
       CFG.gridCols = THUMB_COLS[(THUMB_COLS.indexOf(CFG.gridCols) + 1) % THUMB_COLS.length];
       GM_setValue('gridCols', CFG.gridCols); applyStyle();
       document.querySelectorAll('.yt-ctl[data-yt-act="size"]').forEach((b) => { b.title = `Thumbnail size (${CFG.gridCols} columns)`; });
-    } else if (ctl.dataset.ytAct === 'theater') {
-      CFG.theater = !CFG.theater;
-      GM_setValue('theater', CFG.theater); applyRoute();
     }
+  }
+
+  // Route a thumbnail click to the full /video/<id> page (comments + description),
+  // instead of TA's inline ?videoId= quick player. Capture phase so we intercept
+  // before TA's own React onClick; the card's title link already targets /video/<id>.
+  function onThumbClick(e) {
+    if (!CFG.fullPageOnThumb || !e.target.closest) return;
+    const thumb = e.target.closest('.video-thumb, .video-thumb-wrap');
+    if (!thumb) return;
+    // leave the multi-select checkbox / action buttons (e.g. downloads page) alone
+    if (e.target.closest('button, input, .video-item-select, .video-item-select-wrapper')) return;
+    const item = thumb.closest('.video-item');
+    // the card's title link already points at the proper /video/<id> page; reuse its href
+    const link = item && item.querySelector('a[href*="/video/"]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href) return;
+    // beat TA's own onClick (which would set ?videoId=) and go straight to the clean URL
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    location.assign(href);
   }
 
   /* ================= NAVIGATION / SEARCH ============= */
@@ -855,8 +808,8 @@ body.yt-force-grid .grid-count { display: none !important; }
       () => { CFG.forceGrid = !CFG.forceGrid; GM_setValue('forceGrid', CFG.forceGrid); applyBodyFlags(); refreshMenu(); }
     );
     GM_registerMenuCommand(
-      (CFG.twoColumn ? '◫ Watch: two-column (ON)' : '▭ Watch: single column (OFF)'),
-      () => { CFG.twoColumn = !CFG.twoColumn; GM_setValue('twoColumn', CFG.twoColumn); applyRoute(); refreshMenu(); }
+      (CFG.fullPageOnThumb ? '▶ Thumbnail opens full page (ON)' : '▷ Thumbnail opens inline player (OFF)'),
+      () => { CFG.fullPageOnThumb = !CFG.fullPageOnThumb; GM_setValue('fullPageOnThumb', CFG.fullPageOnThumb); refreshMenu(); }
     );
     GM_registerMenuCommand(
       `🖼️ Thumbnail size: ${CFG.gridCols} columns (click to cycle)`,
@@ -878,6 +831,7 @@ body.yt-force-grid .grid-count { display: none !important; }
   applyStyle();          // at document-start, before first paint (kills the flash)
   registerMenu();
   document.addEventListener('click', onCtlClick, true); // delegated controls (size/theme)
+  document.addEventListener('click', onThumbClick, true); // thumbnail -> full /video/ page
 
   function boot() {
     applyBodyFlags();
@@ -887,7 +841,6 @@ body.yt-force-grid .grid-count { display: none !important; }
     decorateCards();
     decorateComments();
     enhanceViewControls();
-    enhanceWatch();
     tagSubscribe();
   }
 
@@ -912,7 +865,6 @@ body.yt-force-grid .grid-count { display: none !important; }
       decorateCards();
       decorateComments();
       enhanceViewControls();
-      enhanceWatch();
       tagSubscribe();
     });
   });
