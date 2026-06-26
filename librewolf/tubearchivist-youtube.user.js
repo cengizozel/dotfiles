@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.24.0
+// @version      1.25.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -52,6 +52,11 @@
 
 (function () {
   'use strict';
+
+  // Tampermonkey's @match can match loosely on the host (ignoring the port) in some
+  // setups, which let this skin leak onto other services on the same IP (e.g. Jellyfin
+  // on :8096). TA is served on :18000, so bail if a different port is present.
+  if (location.port && location.port !== '18000') return;
 
   /* ======================= CONFIG ======================= */
   const CFG = {
@@ -344,15 +349,16 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
   .yt-search { width: min(420px, 38vw) !important; }
   /* video-page info tiles + action buttons stack into one column */
   body.yt-video .info-box { grid-template-columns: 1fr !important; }
-  /* one video per row + no thumbnail-size control (it's moot at one column) */
-  html .video-list.grid, html body.yt-force-grid .video-list.list { grid-template-columns: 1fr !important; }
   .view-icons .yt-ctl[data-yt-act="size"] { display: none !important; }
 }
+/* one video per row on mobile. Higher specificity than TA's own .video-list.grid.grid-N
+   (0,3,0) and our force-grid base, so it actually wins for both grid- and list-mode lists. */
+body.yt-mobile .video-list.grid,
+body.yt-mobile.yt-force-grid .video-list.list { grid-template-columns: 1fr !important; }
 @media (max-width: 520px) {
   .top-nav { padding: 0 8px !important; }
   .yt-logo .yt-word { display: none !important; }   /* keep the play-button logo, drop the wordmark */
   .yt-search { width: 46vw !important; }
-  html .video-list.grid, html body.yt-force-grid .video-list.list { grid-template-columns: 1fr !important; }
 }
 
 .video-item { background: transparent !important; border-radius: 12px; }
