@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.18.0
+// @version      1.18.1
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -31,6 +31,22 @@
  *    • Skin: on / off
  *
  *  If TA ever changes its class names, only the CSS below needs touching.
+ * --------------------------------------------------------------------------
+ *
+ *  TARGET TUBEARCHIVIST BUILD  (what this skin's selectors were written against)
+ *  ---------------------------------------------------------------------------
+ *  If a TA update breaks this skin, pull the exact build below and diff its
+ *  frontend bundle class names against the selectors used here.
+ *    image          : bbilly1/tubearchivist:latest
+ *    image built    : 2026-03-28
+ *    image id       : sha256:8babfe009c923a69ac054bc375145124f4f79b31b7be3484ad251aeaf4b1f3db
+ *    repo digest    : bbilly1/tubearchivist@sha256:dfe723cf008520e1758ecc3e59e6ea8761dd10d5bb099cd87289e80f5bd66567
+ *    frontend js    : /assets/index.CjzLN-6T.js
+ *    frontend css   : /assets/index.DITeLYOe.css
+ *    host           : ev  (tailscale 100.68.102.5:18000)
+ *    noted          : 2026-06-26
+ *  To compare after an update:  docker pull the repo digest above (or look at
+ *  the new /assets/index.*.{js,css}) and check which classes/elements changed.
  * --------------------------------------------------------------------------
  */
 
