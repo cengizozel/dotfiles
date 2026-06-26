@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.25.1
+// @version      1.25.2
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -581,11 +581,6 @@ body.yt-force-grid .grid-count { display: none !important; }
 .lds-ring div { border-color: ${t.red} transparent transparent transparent !important; }
 
 /* ---- 10. RESPONSIVE: collapse sidebar on narrow screens ---- */
-@media (max-width: 1000px) {
-  .nav-items { transform: translateX(-100%); }
-  .main-content, .footer { margin-left: 0 !important; }
-  .video-item.list { grid-template-columns: 240px auto !important; }
-}
 `;
   }
 
