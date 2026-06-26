@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.23.0
+// @version      1.24.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -254,6 +254,8 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
 .nav-icons a, .nav-icons > img { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; }
 .nav-icons a:hover, .nav-icons > img:hover { background: ${t.chip}; }
 .nav-icons img { width: 24px !important; height: 24px; padding: 0 !important; filter: var(--img-filter); }
+/* hide TA's redundant search icon - the masthead already has a full search bar */
+.nav-icons a[href*="search" i] { display: none !important; }
 
 /* ---- 5. LEFT GUIDE SIDEBAR (lay out the existing .nav-items as a fixed rail) ---- */
 .nav-items {
@@ -342,6 +344,9 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
   .yt-search { width: min(420px, 38vw) !important; }
   /* video-page info tiles + action buttons stack into one column */
   body.yt-video .info-box { grid-template-columns: 1fr !important; }
+  /* one video per row + no thumbnail-size control (it's moot at one column) */
+  html .video-list.grid, html body.yt-force-grid .video-list.list { grid-template-columns: 1fr !important; }
+  .view-icons .yt-ctl[data-yt-act="size"] { display: none !important; }
 }
 @media (max-width: 520px) {
   .top-nav { padding: 0 8px !important; }
@@ -609,6 +614,14 @@ body.yt-force-grid .grid-count { display: none !important; }
     bd.className = 'yt-backdrop';
     bd.addEventListener('click', () => { mobileSidebarOpen = false; applyBodyFlags(); });
     document.body.appendChild(bd);
+  }
+  // TA ships no mobile viewport tag, so phones render at ~980px and zoom out (the skin's
+  // media queries never see the real width). Force width=device-width so mobile actually adapts.
+  function ensureViewport() {
+    if (!document.head) return;
+    let m = document.querySelector('meta[name="viewport"]');
+    if (!m) { m = document.createElement('meta'); m.setAttribute('name', 'viewport'); document.head.appendChild(m); }
+    m.setAttribute('content', 'width=device-width, initial-scale=1');
   }
 
   /* ================= MASTHEAD ENHANCERS ============== */
@@ -925,6 +938,7 @@ body.yt-force-grid .grid-count { display: none !important; }
 
   function boot() {
     applyBodyFlags();
+    ensureViewport();
     ensureBackdrop();
     applyRoute();
     enhanceMasthead();
