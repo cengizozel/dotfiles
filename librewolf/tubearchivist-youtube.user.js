@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.22.0
+// @version      1.22.1
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -475,12 +475,13 @@ input:not(.yt-search input), select, textarea {
    .title-bar padding-top (30px) => a big gap before the title. Collapse it. */
 body.yt-video .player-wrapper { margin-bottom: 0 !important; }
 body.yt-video .main-content > .boxed-content:not(:has(.top-nav)) { padding-top: 0 !important; }
-body.yt-video .title-bar { padding-top: 14px !important; }
+body.yt-video .title-bar { padding-top: 6px !important; }
 
-/* icons on the /video/ action buttons (Reindex / Download File / Delete / Add to playlist) */
-.button-box button { display: inline-flex !important; align-items: center; gap: 7px; }
-.yt-btn-ico { width: 17px; height: 17px; display: inline-block; flex: 0 0 auto; background: currentColor;
-  -webkit-mask: var(--ico) center / 17px 17px no-repeat; mask: var(--ico) center / 17px 17px no-repeat; }
+/* icons on the /video/ action buttons (Reindex / Download File / Delete / Add to playlist):
+   bigger icon stacked on top of the label */
+.button-box button { display: inline-flex !important; flex-direction: column !important; align-items: center; gap: 5px; }
+.yt-btn-ico { width: 24px; height: 24px; display: inline-block; flex: 0 0 auto; background: currentColor;
+  -webkit-mask: var(--ico) center / 24px 24px no-repeat; mask: var(--ico) center / 24px 24px no-repeat; }
 .player-title h3 { text-transform: none !important; font-size: 1.4rem !important; font-weight: 700; color: ${t.text} !important; width: 100%; }
 .player-title .close-button { position: absolute; top: 14px; right: 0; width: 24px !important; }
 .player-title .thumb-icon { display: inline-flex; align-items: center; }
