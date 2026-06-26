@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.21.4
+// @version      1.22.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -95,6 +95,9 @@
     search:  svg('M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'),
     theme:   svg('M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18V6c3.31 0 6 2.69 6 6s-2.69 6-6 6z'),
     resize:  svg('M19 12h-2v3h-3v2h5v-5zM7 9h3V7H5v5h2V9zm14-6H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16.01H3V4.99h18v14.02z'),
+    reindex: svg('M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z'),
+    trash:   svg('M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z'),
+    playlistAdd: svg('M2 6v2h12V6H2zm0 4v2h9v-2H2zm0 4v2h9v-2H2zm14-3v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2z'),
   };
 
   /* ====================== THEMES ======================= */
@@ -467,6 +470,17 @@ input:not(.yt-search input), select, textarea {
 .video-main video, .video-player video { border-radius: 0; background: ${t.bg} !important; }
 .player-title { padding-top: 2px !important; position: relative; }
 .player-title > h3 { margin: 4px 0 6px 0 !important; }
+
+/* /video/ page: TA stacks player margin (20px) + boxed-content padding (24px) +
+   .title-bar padding-top (30px) => a big gap before the title. Collapse it. */
+body.yt-video .player-wrapper { margin-bottom: 0 !important; }
+body.yt-video .main-content > .boxed-content:not(:has(.top-nav)) { padding-top: 0 !important; }
+body.yt-video .title-bar { padding-top: 14px !important; }
+
+/* icons on the /video/ action buttons (Reindex / Download File / Delete / Add to playlist) */
+.button-box button { display: inline-flex !important; align-items: center; gap: 7px; }
+.yt-btn-ico { width: 17px; height: 17px; display: inline-block; flex: 0 0 auto; background: currentColor;
+  -webkit-mask: var(--ico) center / 17px 17px no-repeat; mask: var(--ico) center / 17px 17px no-repeat; }
 .player-title h3 { text-transform: none !important; font-size: 1.4rem !important; font-weight: 700; color: ${t.text} !important; width: 100%; }
 .player-title .close-button { position: absolute; top: 14px; right: 0; width: 24px !important; }
 .player-title .thumb-icon { display: inline-flex; align-items: center; }
@@ -610,6 +624,26 @@ body.yt-force-grid .grid-count { display: none !important; }
     });
   }
 
+  // Prepend an icon to the /video/ action buttons (Reindex / Download File / Delete / Add to playlist).
+  const ACTION_ICONS = [
+    ['reindex', ICON.reindex],
+    ['download file', ICON.downloads],
+    ['delete', ICON.trash],
+    ['add to playlist', ICON.playlistAdd],
+  ];
+  function decorateActionButtons() {
+    document.querySelectorAll('.button-box button, #reindex-button button').forEach((btn) => {
+      if (btn.querySelector('.yt-btn-ico')) return;
+      const label = (btn.textContent || '').trim().toLowerCase();
+      const match = ACTION_ICONS.find(([t]) => label.startsWith(t));
+      if (!match) return;
+      const i = document.createElement('i');
+      i.className = 'yt-btn-ico';
+      i.style.setProperty('--ico', match[1]);
+      btn.insertBefore(i, btn.firstChild);
+    });
+  }
+
   // Assign a distinct guide icon to each sidebar item by its label text.
   // (Inline custom property -> survives React re-renders; :nth-of-type can't be used
   // because each .nav-item is the sole child of its own <a> wrapper.)
@@ -675,6 +709,7 @@ body.yt-force-grid .grid-count { display: none !important; }
     const b = document.body;
     if (!b) return;
     b.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
+    b.classList.toggle('yt-video', location.pathname.startsWith('/video/'));
   }
 
   // TA comments have no avatar data, so give each a YouTube-style letter avatar
@@ -842,6 +877,7 @@ body.yt-force-grid .grid-count { display: none !important; }
     decorateComments();
     enhanceViewControls();
     tagSubscribe();
+    decorateActionButtons();
   }
 
   if (document.readyState === 'loading') {
@@ -866,6 +902,7 @@ body.yt-force-grid .grid-count { display: none !important; }
       decorateComments();
       enhanceViewControls();
       tagSubscribe();
+    decorateActionButtons();
     });
   });
   if (document.documentElement) {
