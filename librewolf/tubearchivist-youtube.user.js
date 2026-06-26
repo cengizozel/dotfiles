@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.15.0
+// @version      1.16.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -56,6 +56,8 @@
     gridCols: GM_getValue('gridCols', 5),
     // flip TA's saved view mode to grid automatically (TA stores it server-side as list)
     forceGrid: GM_getValue('forceGrid', true),
+    // watch page: theater = player wide + videos below; otherwise videos in a right rail
+    theater: GM_getValue('theater', false),
     sidebarWidth: 240,
     mastheadHeight: 56,
   };
@@ -76,6 +78,7 @@
     search:  svg('M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'),
     theme:   svg('M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18V6c3.31 0 6 2.69 6 6s-2.69 6-6 6z'),
     resize:  svg('M19 12h-2v3h-3v2h5v-5zM7 9h3V7H5v5h2V9zm14-6H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16.01H3V4.99h18v14.02z'),
+    widescreen: svg('M19 6H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H5V8h14v8z'),
   };
 
   /* ====================== THEMES ======================= */
@@ -235,7 +238,7 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
 
 /* ---- 5. LEFT GUIDE SIDEBAR (lay out the existing .nav-items as a fixed rail) ---- */
 .nav-items {
-  position: fixed !important; top: ${MH}; left: 0; bottom: 0; width: ${SW};
+  position: fixed !important; top: ${MH}; left: 0; bottom: 0; width: ${SW}; box-sizing: border-box !important;
   display: flex !important; flex-direction: column; justify-content: flex-start !important;
   align-items: stretch; gap: 2px; padding: 12px !important;
   background: ${t.bg} !important; overflow-y: auto; z-index: 2000;
@@ -476,6 +479,48 @@ input:not(.yt-search input), select, textarea {
 .comments-replies .comment-box { grid-template-columns: 32px 1fr; }
 .comments-replies .yt-avatar { width: 32px !important; height: 32px !important; font-size: .9rem !important; }
 
+/* ---- 8b. WATCH LAYOUT: two-column (player left, videos right rail); theater = videos below ---- */
+/* tame the inline player's full-viewport height */
+body.yt-watching .video-player { height: auto !important; padding: 0 !important; }
+body.yt-watching .video-player video, body.yt-watching .video-main video { max-height: 78vh; }
+/* the black rounded box belongs on the video, not the whole wrapper (which clipped the
+   title/description/comments text in theater mode) */
+body.yt-watching .player-wrapper { background: transparent !important; overflow: visible !important; border-radius: 0 !important; }
+body.yt-watching .video-main { background: #000 !important; border-radius: 12px; overflow: hidden; }
+body.yt-watching .player-title { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* theater toggle button injected into the player title bar */
+.player-title .yt-theater-btn { position: absolute; top: 12px; right: 40px; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; border-radius: 50%; }
+.player-title .yt-theater-btn:hover, body.yt-theater .player-title .yt-theater-btn { background: ${t.chip}; }
+.player-title .yt-theater-btn i { width: 24px; height: 24px; display: block; background: ${t.text}; -webkit-mask: ${ICON.widescreen} center / 24px 24px no-repeat; mask: ${ICON.widescreen} center / 24px 24px no-repeat; }
+
+/* TWO-COLUMN: a video is open and theater is off */
+body.yt-watching:not(.yt-theater) .main-content {
+  display: grid !important;
+  grid-template-columns: ${SW} minmax(0, 1fr) 400px;
+  align-items: start;
+}
+body.yt-hide-sidebar.yt-watching:not(.yt-theater) .main-content { grid-template-columns: 0 minmax(0, 1fr) 400px; }
+/* default: every direct child spans full width (masthead, notifications, strays) ... */
+body.yt-watching:not(.yt-theater) .main-content > * { grid-column: 1 / -1; margin: 0 !important; }
+/* ... then place the two we want side by side */
+body.yt-watching:not(.yt-theater) .main-content > .player-wrapper { grid-column: 2; padding: 12px 24px 24px 24px; }
+body.yt-watching:not(.yt-theater) .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 3; padding: 12px 24px 24px 0; }
+@media (max-width: 1150px) { /* too narrow for a rail -> fall back to single column */
+  body.yt-watching:not(.yt-theater) .main-content { grid-template-columns: 1fr !important; }
+  body.yt-watching:not(.yt-theater) .main-content > .player-wrapper,
+  body.yt-watching:not(.yt-theater) .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 1 !important; }
+}
+
+/* right rail: hide its header/controls, single column of compact horizontal cards */
+body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) > .title-bar,
+body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .view-controls { display: none !important; }
+body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-list { grid-template-columns: 1fr !important; gap: 10px !important; margin-top: 0 !important; }
+body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-item { display: grid !important; grid-template-columns: 168px 1fr !important; gap: 10px; }
+body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-desc.grid { padding: 0 !important; }
+body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-desc .video-more h2 { font-size: .92rem !important; }
+body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-desc-player { display: none !important; }
+
 /* info boxes / stats tiles */
 .info-box-item { background: ${t.surface} !important; }
 
@@ -490,8 +535,11 @@ body.yt-force-grid .view-icons img[src*="listview" i],
 body.yt-force-grid .view-icons img[src*="tableview" i] { display: none !important; }
 body.yt-force-grid .grid-count { display: none !important; }
 
-/* in-page controls injected into the view-controls bar (theme + thumbnail size) */
-.view-icons .yt-ctl { display: inline-grid; place-items: center; width: 32px; height: 32px; margin: 5px 4px; cursor: pointer; border-radius: 50%; }
+/* in-page controls injected into the view-controls bar (theme + thumbnail size).
+   Force uniform height + vertical margins on imgs AND my buttons so they share one baseline. */
+.view-icons { align-items: center !important; }
+.view-icons img { width: 24px !important; height: 32px !important; object-fit: contain; margin: 0 8px !important; }
+.view-icons .yt-ctl { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 32px; margin: 0 2px; cursor: pointer; border-radius: 50%; }
 .view-icons .yt-ctl:hover { background: ${t.chip}; }
 .view-icons .yt-ctl i { width: 22px; height: 22px; display: block; background: ${t.text};
   -webkit-mask: var(--ico) center / 22px 22px no-repeat; mask: var(--ico) center / 22px 22px no-repeat; }
@@ -643,7 +691,25 @@ body.yt-force-grid .grid-count { display: none !important; }
   // Tag the body with the current route so CSS can scope page-specific tweaks
   // (e.g. the status badges only make sense on /downloads/).
   function applyRoute() {
-    if (document.body) document.body.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
+    const b = document.body;
+    if (!b) return;
+    b.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
+    b.classList.toggle('yt-watching', /[?&]videoId=/.test(location.search)); // a video is open
+    b.classList.toggle('yt-theater', !!CFG.theater);
+  }
+
+  // Inject a theater-mode toggle into the player title bar (watch view).
+  function enhanceWatch() {
+    const pt = document.querySelector('.player-title');
+    if (!pt || pt.querySelector('.yt-theater-btn')) return;
+    const btn = document.createElement('span');
+    btn.className = 'yt-theater-btn';
+    btn.dataset.ytAct = 'theater';
+    btn.title = 'Theater mode (videos below / on the side)';
+    const i = document.createElement('i');
+    i.style.setProperty('--ico', ICON.widescreen);
+    btn.appendChild(i);
+    pt.appendChild(btn);
   }
 
   // TA comments have no avatar data, so give each a YouTube-style letter avatar
@@ -688,7 +754,7 @@ body.yt-force-grid .grid-count { display: none !important; }
   // controls bar (that's the "first click does nothing" symptom). One document-level
   // listener handles clicks on any current-or-future .yt-ctl reliably.
   function onCtlClick(e) {
-    const ctl = e.target.closest ? e.target.closest('.yt-ctl') : null;
+    const ctl = e.target.closest ? e.target.closest('[data-yt-act]') : null;
     if (!ctl) return;
     if (ctl.dataset.ytAct === 'theme') {
       CFG.theme = CFG.theme === 'dark' ? 'light' : 'dark';
@@ -697,6 +763,9 @@ body.yt-force-grid .grid-count { display: none !important; }
       CFG.gridCols = THUMB_COLS[(THUMB_COLS.indexOf(CFG.gridCols) + 1) % THUMB_COLS.length];
       GM_setValue('gridCols', CFG.gridCols); applyStyle();
       document.querySelectorAll('.yt-ctl[data-yt-act="size"]').forEach((b) => { b.title = `Thumbnail size (${CFG.gridCols} columns)`; });
+    } else if (ctl.dataset.ytAct === 'theater') {
+      CFG.theater = !CFG.theater;
+      GM_setValue('theater', CFG.theater); applyRoute();
     }
   }
 
@@ -783,6 +852,7 @@ body.yt-force-grid .grid-count { display: none !important; }
     decorateCards();
     decorateComments();
     enhanceViewControls();
+    enhanceWatch();
     tagSubscribe();
   }
 
@@ -807,6 +877,7 @@ body.yt-force-grid .grid-count { display: none !important; }
       decorateCards();
       decorateComments();
       enhanceViewControls();
+      enhanceWatch();
       tagSubscribe();
     });
   });
