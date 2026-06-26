@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.22.1
+// @version      1.23.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -323,9 +323,32 @@ body.yt-hide-sidebar .footer { margin-left: 0 !important; }
   grid-gap: 18px 14px !important;
 }
 /* cap columns on narrower windows (never more than the chosen count) */
-@media (max-width: 1280px) { .video-list.grid, body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(4)}, minmax(0,1fr)) !important; } }
-@media (max-width: 900px)  { .video-list.grid, body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(3)}, minmax(0,1fr)) !important; } }
-@media (max-width: 600px)  { .video-list.grid, body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(2)}, minmax(0,1fr)) !important; } }
+@media (max-width: 1280px) { html .video-list.grid, html body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(4)}, minmax(0,1fr)) !important; } }
+@media (max-width: 900px)  { html .video-list.grid, html body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(3)}, minmax(0,1fr)) !important; } }
+@media (max-width: 600px)  { html .video-list.grid, html body.yt-force-grid .video-list.list { grid-template-columns: repeat(${colsAt(2)}, minmax(0,1fr)) !important; } }
+
+/* ---- MOBILE: content goes full width, the sidebar becomes a tap-to-open overlay ---- */
+.yt-backdrop { display: none; }
+@media (max-width: ${MOBILE_BP}px) {
+  /* content spans the full width; the fixed sidebar floats over it instead of pushing it */
+  body.yt-mobile .main-content > .boxed-content:not(:has(.top-nav)),
+  body.yt-mobile .main-content > .player-wrapper,
+  body.yt-mobile .footer { margin-left: 0 !important; }
+  body.yt-mobile .nav-items { z-index: 2050 !important; box-shadow: 0 0 30px rgba(0,0,0,.55); }
+  body.yt-mobile:not(.yt-hide-sidebar) .yt-backdrop {
+    display: block; position: fixed; inset: ${MH} 0 0 0; background: rgba(0,0,0,.5); z-index: 2000;
+  }
+  /* masthead: smaller centered search so it clears the logo + icons */
+  .yt-search { width: min(420px, 38vw) !important; }
+  /* video-page info tiles + action buttons stack into one column */
+  body.yt-video .info-box { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 520px) {
+  .top-nav { padding: 0 8px !important; }
+  .yt-logo .yt-word { display: none !important; }   /* keep the play-button logo, drop the wordmark */
+  .yt-search { width: 46vw !important; }
+  html .video-list.grid, html body.yt-force-grid .video-list.list { grid-template-columns: 1fr !important; }
+}
 
 .video-item { background: transparent !important; border-radius: 12px; }
 .video-thumb-wrap, .video-thumb { border-radius: 12px; overflow: hidden; }
@@ -567,11 +590,25 @@ body.yt-force-grid .grid-count { display: none !important; }
   }
 
   /* ================= BODY STATE FLAGS ================ */
+  const MOBILE_BP = 820;                 // <= this width -> mobile layout
+  let mobileSidebarOpen = false;         // on mobile the sidebar is an overlay, closed by default
+  const isMobile = () => window.innerWidth <= MOBILE_BP;
   function applyBodyFlags() {
     const b = document.body;
     if (!b) return;
-    b.classList.toggle('yt-hide-sidebar', !CFG.sidebar);
+    b.classList.toggle('yt-mobile', isMobile());
+    // desktop: sidebar visibility follows the saved preference.
+    // mobile: it's an overlay that defaults closed and opens with the hamburger.
+    b.classList.toggle('yt-hide-sidebar', isMobile() ? !mobileSidebarOpen : !CFG.sidebar);
     b.classList.toggle('yt-force-grid', !!CFG.forceGrid);
+  }
+  // backdrop behind the mobile sidebar overlay; tap to close
+  function ensureBackdrop() {
+    if (!document.body || document.querySelector('.yt-backdrop')) return;
+    const bd = document.createElement('div');
+    bd.className = 'yt-backdrop';
+    bd.addEventListener('click', () => { mobileSidebarOpen = false; applyBodyFlags(); });
+    document.body.appendChild(bd);
   }
 
   /* ================= MASTHEAD ENHANCERS ============== */
@@ -588,8 +625,12 @@ body.yt-force-grid .grid-count { display: none !important; }
     burger.title = 'Toggle sidebar';
     burger.innerHTML = '<i></i>';
     burger.addEventListener('click', () => {
-      CFG.sidebar = !CFG.sidebar;
-      GM_setValue('sidebar', CFG.sidebar);
+      if (isMobile()) {
+        mobileSidebarOpen = !mobileSidebarOpen;       // toggle the overlay
+      } else {
+        CFG.sidebar = !CFG.sidebar;                   // persist the desktop preference
+        GM_setValue('sidebar', CFG.sidebar);
+      }
       applyBodyFlags();
     });
 
@@ -868,9 +909,23 @@ body.yt-force-grid .grid-count { display: none !important; }
   registerMenu();
   document.addEventListener('click', onCtlClick, true); // delegated controls (size/theme)
   document.addEventListener('click', onThumbClick, true); // thumbnail -> full /video/ page
+  // on mobile, tapping a sidebar entry closes the overlay
+  document.addEventListener('click', (e) => {
+    if (isMobile() && mobileSidebarOpen && e.target.closest && e.target.closest('.nav-items a')) {
+      mobileSidebarOpen = false; applyBodyFlags();
+    }
+  });
+  // re-evaluate the mobile/desktop layout on resize (debounced)
+  let resizePending = false;
+  window.addEventListener('resize', () => {
+    if (resizePending) return;
+    resizePending = true;
+    requestAnimationFrame(() => { resizePending = false; applyBodyFlags(); });
+  });
 
   function boot() {
     applyBodyFlags();
+    ensureBackdrop();
     applyRoute();
     enhanceMasthead();
     decorateSidebar();
