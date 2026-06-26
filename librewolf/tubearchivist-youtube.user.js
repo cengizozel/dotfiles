@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.17.0
+// @version      1.18.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
@@ -56,7 +56,9 @@
     gridCols: GM_getValue('gridCols', 5),
     // flip TA's saved view mode to grid automatically (TA stores it server-side as list)
     forceGrid: GM_getValue('forceGrid', true),
-    // watch page: theater = player wide + videos below; otherwise videos in a right rail
+    // watch page: opt-in two-column (videos in a right rail). Off until the live watch
+    // DOM is matched correctly; theater = within two-column, push videos below instead.
+    twoColumn: GM_getValue('twoColumn', false),
     theater: GM_getValue('theater', false),
     sidebarWidth: 240,
     mastheadHeight: 56,
@@ -480,9 +482,16 @@ input:not(.yt-search input), select, textarea {
 .comments-replies .yt-avatar { width: 32px !important; height: 32px !important; font-size: .9rem !important; }
 
 /* ---- 8b. WATCH LAYOUT: two-column (player left, videos right rail); theater = videos below ---- */
-/* tame the inline player's full-viewport height */
-body.yt-watching .video-player { height: auto !important; padding: 0 !important; }
+/* tame the inline player's full-viewport height + lay it out as a column so we can
+   reorder the SponsorBlock notice off the video's bottom edge */
+body.yt-watching .video-player { height: auto !important; padding: 0 !important; display: flex !important; flex-direction: column; }
 body.yt-watching .video-player video, body.yt-watching .video-main video { max-height: 78vh; }
+body.yt-watching .video-player > .video-main { order: 1; }
+body.yt-watching .video-player > .player-title { order: 2; }
+body.yt-watching .video-player > .description-box { order: 3; }
+body.yt-watching .video-player > .sponsorblock,
+body.yt-watching .video-player > #sponsorblock { order: 4; margin: 10px 0 0 0 !important; }
+body.yt-watching .video-player > .comments-section { order: 5; }
 /* the black rounded box belongs on the video, not the whole wrapper (which clipped the
    title/description/comments text in theater mode) */
 body.yt-watching .player-wrapper { background: transparent !important; overflow: visible !important; border-radius: 0 !important; }
@@ -495,31 +504,31 @@ body.yt-watching .player-title { padding-left: 0 !important; padding-right: 0 !i
 .player-title .yt-theater-btn i { width: 24px; height: 24px; display: block; margin: 0 !important; background: ${t.text}; -webkit-mask: ${ICON.widescreen} center / 24px 24px no-repeat; mask: ${ICON.widescreen} center / 24px 24px no-repeat; }
 
 /* TWO-COLUMN: a video is open and theater is off */
-body.yt-watching:not(.yt-theater) .main-content {
+body.yt-2col .main-content {
   display: grid !important;
   grid-template-columns: ${SW} minmax(0, 1fr) 400px;
   align-items: start;
 }
-body.yt-hide-sidebar.yt-watching:not(.yt-theater) .main-content { grid-template-columns: 0 minmax(0, 1fr) 400px; }
+body.yt-hide-sidebar.yt-2col .main-content { grid-template-columns: 0 minmax(0, 1fr) 400px; }
 /* default: every direct child spans full width (masthead, notifications, strays) ... */
-body.yt-watching:not(.yt-theater) .main-content > * { grid-column: 1 / -1; margin: 0 !important; }
+body.yt-2col .main-content > * { grid-column: 1 / -1; margin: 0 !important; }
 /* ... then place the two we want side by side */
-body.yt-watching:not(.yt-theater) .main-content > .player-wrapper { grid-column: 2; padding: 12px 24px 24px 24px; }
-body.yt-watching:not(.yt-theater) .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 3; padding: 12px 24px 24px 0; }
+body.yt-2col .main-content > .player-wrapper { grid-column: 2; padding: 12px 24px 24px 24px; }
+body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 3; padding: 12px 24px 24px 0; }
 @media (max-width: 1150px) { /* too narrow for a rail -> fall back to single column */
-  body.yt-watching:not(.yt-theater) .main-content { grid-template-columns: 1fr !important; }
-  body.yt-watching:not(.yt-theater) .main-content > .player-wrapper,
-  body.yt-watching:not(.yt-theater) .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 1 !important; }
+  body.yt-2col .main-content { grid-template-columns: 1fr !important; }
+  body.yt-2col .main-content > .player-wrapper,
+  body.yt-2col .main-content > .boxed-content:not(:has(.top-nav)) { grid-column: 1 !important; }
 }
 
 /* right rail: hide its header/controls, single column of compact horizontal cards */
-body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) > .title-bar,
-body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .view-controls { display: none !important; }
-body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-list { grid-template-columns: 1fr !important; gap: 10px !important; margin-top: 0 !important; }
-body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-item { display: grid !important; grid-template-columns: 168px 1fr !important; gap: 10px; }
-body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-desc.grid { padding: 0 !important; }
-body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-desc .video-more h2 { font-size: .92rem !important; }
-body.yt-watching:not(.yt-theater) .boxed-content:not(:has(.top-nav)) .video-desc-player { display: none !important; }
+body.yt-2col .boxed-content:not(:has(.top-nav)) > .title-bar,
+body.yt-2col .boxed-content:not(:has(.top-nav)) .view-controls { display: none !important; }
+body.yt-2col .boxed-content:not(:has(.top-nav)) .video-list { grid-template-columns: 1fr !important; gap: 10px !important; margin-top: 0 !important; }
+body.yt-2col .boxed-content:not(:has(.top-nav)) .video-item { display: grid !important; grid-template-columns: 168px 1fr !important; gap: 10px; }
+body.yt-2col .boxed-content:not(:has(.top-nav)) .video-desc.grid { padding: 0 !important; }
+body.yt-2col .boxed-content:not(:has(.top-nav)) .video-desc .video-more h2 { font-size: .92rem !important; }
+body.yt-2col .boxed-content:not(:has(.top-nav)) .video-desc-player { display: none !important; }
 
 /* info boxes / stats tiles */
 .info-box-item { background: ${t.surface} !important; }
@@ -694,12 +703,15 @@ body.yt-force-grid .grid-count { display: none !important; }
     const b = document.body;
     if (!b) return;
     b.classList.toggle('yt-downloads', location.pathname.startsWith('/downloads'));
-    b.classList.toggle('yt-watching', /[?&]videoId=/.test(location.search)); // a video is open
+    const watching = /[?&]videoId=/.test(location.search); // a video is open
+    b.classList.toggle('yt-watching', watching);
     b.classList.toggle('yt-theater', !!CFG.theater);
+    b.classList.toggle('yt-2col', watching && CFG.twoColumn && !CFG.theater);
   }
 
   // Inject a theater-mode toggle into the player title bar (watch view).
   function enhanceWatch() {
+    if (!CFG.twoColumn) return; // theater toggle only matters in two-column mode
     const pt = document.querySelector('.player-title');
     if (!pt || pt.querySelector('.yt-theater-btn')) return;
     const btn = document.createElement('span');
