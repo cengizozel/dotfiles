@@ -1,0 +1,24 @@
+// Yes/No confirmation dialog. Inherits the launcher theme but removes the
+// text entry (nothing to type) and shows just the prompt + two choices.
+@import "config.rasi"
+
+mainbox {
+    children: [ "inputbar", "listview" ];
+}
+
+// The prompt holds the question; hide the search entry entirely.
+inputbar {
+    children: [ "prompt" ];
+}
+
+prompt {
+    text-color: @fg;
+}
+
+listview {
+    lines: 2;
+}
+
+element-text {
+    horizontal-align: 0.0;
+}
