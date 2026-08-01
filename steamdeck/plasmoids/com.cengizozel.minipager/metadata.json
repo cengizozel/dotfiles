@@ -1,0 +1,17 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Cengiz Ozel"
+            }
+        ],
+        "Category": "Windows and Tasks",
+        "Description": "Minimal numbered workspace switcher",
+        "Icon": "virtual-desktops",
+        "Id": "com.cengizozel.minipager",
+        "Name": "Mini Pager",
+        "Version": "1.0"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

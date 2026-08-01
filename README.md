@@ -1,7 +1,5 @@
 # dotfiles
 
-Hyprland desktop on Arch Linux, themed with Tokyo Night.
-
 ![Desktop screenshot](screenshot.png)
 
 ## Setup
