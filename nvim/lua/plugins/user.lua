@@ -6,23 +6,16 @@ return {
   },
   { "ThePrimeagen/vim-be-good" },
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    opts = {
-      filesystem = {
-        hijack_netrw_behavior = "open_current",
-      },
-      window = {
-        width = 25, -- default is 40
-      },
-    },
-  },
-  {
     "folke/snacks.nvim",
     opts = {
+      scroll = { enabled = false },
       picker = {
         sources = {
           projects = {
             dev = { "~/Documents/GitHub" },
+          },
+          explorer = {
+            layout = { layout = { width = 25 } }, -- default is 40
           },
         },
       },
