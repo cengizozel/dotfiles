@@ -48,6 +48,7 @@ Tokyo Night from the same palette as my kitty config.
 - Breeze window borders at Normal size with the outline and shadows off, see `snippets/breezerc` and `snippets/kwinrc-decoration.ini`. Breeze colors only the titlebar by focus state, side borders always take the application background color.
 - `konsole/` holds a profile and color scheme matching kitty, including 70 percent background opacity with blur.
 - Animations globally off, AnimationDurationFactor 0 in kdeglobals plus the slide, scale, squash, maximize and fullscreen effects disabled.
+- `cava/` goes in `~/.config/cava/` and gives the visualizer a Tokyo Night gradient.
 - Wallpaper is night-city.png from this repo.
 
 ## Mini Pager

@@ -26,9 +26,10 @@ git clone https://github.com/cengizozel/dotfiles.git
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `librewolf/userChrome.css` | `~/.config/librewolf/librewolf/<profile>/chrome/userChrome.css` |
 
-The `mac/` folder holds the macOS-specific configs: an
+Device specific setups live in `hosts/`. The `hosts/mac/` folder has an
 [AeroSpace](https://github.com/nikitabobko/AeroSpace) tiling window manager config
-and a kitty `local.conf` with Mac-only overrides, kept here so all configs live in one place.
+and a kitty `local.conf` with Mac only overrides. The `hosts/steamdeck/` folder has
+the Steam Deck desktop mode setup, described in its own [README](hosts/steamdeck/README.md).
 
 ## Keybinds
 

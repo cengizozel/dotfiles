@@ -1,0 +1,9 @@
+[color]
+gradient = 1
+gradient_count = 3
+gradient_color_1 = '#7aa2f7'
+gradient_color_2 = '#bb9af7'
+gradient_color_3 = '#7dcfff'
+
+[input]
+method = pulse
