@@ -13,7 +13,7 @@ if hyprctl monitors | grep -q "^Monitor $MON"; then
     notify-send "Monitor" "$MON off" -t 1500
 else
     IFS=, read -r mode pos scale <<< "$CFG"
-    hyprctl eval "hl.monitor({ output = \"$MON\", mode = \"$mode\", position = \"$pos\", scale = $scale })" | grep -q '^ok' \
+    hyprctl eval "hl.monitor({ output = \"$MON\", mode = \"$mode\", position = \"$pos\", scale = $scale, disabled = false })" | grep -q '^ok' \
         || hyprctl keyword monitor "$MON,$CFG"
     echo on > "$STATE"
     notify-send "Monitor" "$MON on" -t 1500
