@@ -5,5 +5,7 @@ hyprctl activewindow -j | python3 -c "import sys,json; print(json.load(sys.stdin
 hyprctl getoption general:col.active_border -j \
     | python3 -c "import sys,json; print(' '.join('0x'+t if len(t)==8 and not t.endswith('deg') else t for t in json.load(sys.stdin)['custom'].split()))" \
     > /tmp/hypr_swap_border
-hyprctl keyword general:col.active_border "rgb(ff6600)"
-hyprctl dispatch submap swapmode
+hyprctl eval 'hl.config({ general = { col = { active_border = "rgb(ff6600)" } } })' | grep -q '^ok' \
+    || hyprctl keyword general:col.active_border "rgb(ff6600)"
+hyprctl dispatch submap swapmode >/dev/null 2>&1 \
+    || hyprctl dispatch 'hl.dsp.submap("swapmode")'

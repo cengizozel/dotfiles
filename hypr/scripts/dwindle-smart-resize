@@ -105,4 +105,5 @@ jq -rn \
 
 [ -n "$delta" ] || exit 0
 
-hyprctl dispatch -- resizeactive $delta
+hyprctl dispatch -- resizeactive $delta >/dev/null 2>&1 \
+    || hyprctl dispatch "hl.dsp.window.resize({ x = ${delta% *}, y = ${delta#* }, relative = true })"

@@ -13,5 +13,5 @@ choice=$(printf 'Cancel\nLog out' | rofi -dmenu -i \
 if command -v hyprshutdown >/dev/null 2>&1; then
     hyprshutdown
 else
-    hyprctl dispatch exit
+    hyprctl dispatch exit >/dev/null 2>&1 || hyprctl dispatch 'hl.dsp.exit()'
 fi
