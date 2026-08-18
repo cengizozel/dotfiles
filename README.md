@@ -23,6 +23,7 @@ git clone https://github.com/cengizozel/dotfiles.git
 | `nvim/` | `~/.config/nvim/` |
 | `bashrc` | `~/.bashrc` |
 | `bin/rofi-click-away` | `~/.local/bin/rofi-click-away` |
+| `systemd/` | `~/.config/systemd/user/` |
 | `wallpapers/` | `~/Pictures/wallpapers/` |
 | `librewolf/userChrome.css` | `~/.config/librewolf/librewolf/<profile>/chrome/userChrome.css` |
 
