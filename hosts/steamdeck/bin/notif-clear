@@ -1,0 +1,8 @@
+#!/bin/bash
+# dismiss every visible notification by closing recent ids via the freedesktop protocol
+id=$(gdbus call --session --dest org.freedesktop.Notifications --object-path /org/freedesktop/Notifications \
+  --method org.freedesktop.Notifications.Notify "" 0 "" "" "" "[]" "{'transient': <true>}" 1 | sed 's/.*uint32 \([0-9]*\).*/\1/')
+for ((i=id; i>id-200 && i>0; i--)); do
+  gdbus call --session --dest org.freedesktop.Notifications --object-path /org/freedesktop/Notifications \
+    --method org.freedesktop.Notifications.CloseNotification "$i" >/dev/null 2>&1
+done

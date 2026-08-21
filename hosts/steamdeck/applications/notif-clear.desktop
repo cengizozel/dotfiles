@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Clear Notifications
+Exec=/home/deck/.local/bin/notif-clear
+Icon=notifications
+NoDisplay=true
+X-KDE-Shortcuts=Meta+Backspace

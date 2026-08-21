@@ -1,0 +1,17 @@
+[Desktop Entry]
+X-KDE-Shortcuts=Meta+T
+Version=1.0
+Type=Application
+Name=kitty
+GenericName=Terminal emulator
+Comment=Fast, feature-rich, GPU based terminal
+TryExec=/home/deck/.local/bin/kitty
+StartupNotify=true
+Exec=/home/deck/.local/bin/kitty
+Icon=kitty
+Categories=System;TerminalEmulator;
+X-TerminalArgExec=--
+X-TerminalArgTitle=--title
+X-TerminalArgAppId=--class
+X-TerminalArgDir=--working-directory
+X-TerminalArgHold=--hold
