@@ -42,6 +42,23 @@ protonvpn status
 protonvpn servers               # list available servers
 ```
 
+## Keyring unlock at login
+
+gnome-keyring holds app secrets (Chromium, Signal, Anytype, Nextcloud client).
+Without PAM integration, greetd logins leave it locked and apps prompt for the
+keyring password on first use. Fix is two lines in `/etc/pam.d/greetd`:
+
+```
+auth       optional     pam_gnome_keyring.so
+session    optional     pam_gnome_keyring.so auto_start
+```
+
+The auth line goes after the system-local-login include in the auth block, the
+session line at the end. Secrets must live in the keyring named "login" (the
+only one PAM unlocks) and its password must match the login password. If the
+login password ever changes via passwd, the keyring password does not follow
+and must be updated to match, or the prompts return.
+
 ## Useful commands
 
 ```bash
