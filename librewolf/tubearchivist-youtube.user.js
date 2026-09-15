@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         TubeArchivist → YouTube Skin
 // @namespace    https://github.com/cengizozel/dotfiles
-// @version      1.26.0
+// @version      1.27.0
 // @description  Make self-hosted TubeArchivist look (and feel) like YouTube: masthead, left guide sidebar, card grid, watch page, dark/light themes.
 // @author       cengiz
 // @match        http://100.68.102.5:18000/*
+// @match        http://192.168.1.24:18000/
 // @match        http://localhost:18000/*
 // @match        http://127.0.0.1:18000/*
 // @icon         https://www.youtube.com/favicon.ico
@@ -37,16 +38,27 @@
  *  ---------------------------------------------------------------------------
  *  If a TA update breaks this skin, pull the exact build below and diff its
  *  frontend bundle class names against the selectors used here.
+ *    version        : v0.5.12
  *    image          : bbilly1/tubearchivist:latest
- *    image built    : 2026-03-28
- *    image id       : sha256:8babfe009c923a69ac054bc375145124f4f79b31b7be3484ad251aeaf4b1f3db
- *    repo digest    : bbilly1/tubearchivist@sha256:dfe723cf008520e1758ecc3e59e6ea8761dd10d5bb099cd87289e80f5bd66567
- *    frontend js    : /assets/index.CjzLN-6T.js
- *    frontend css   : /assets/index.DITeLYOe.css
+ *    image built    : 2026-08-25
+ *    image id       : sha256:73e8e071488676edfc8876e96d42c43e63bb855a35f385b4357f981b6a7fb393
+ *    repo digest    : bbilly1/tubearchivist@sha256:ba1c846ddd0c6fdd0f040727129d2466e03b7a0c26499223839d450c7586ac09
+ *    frontend js    : /assets/index.D-fTENPp.js
+ *    frontend css   : /assets/index.kDzfZ_5g.css
  *    host           : ev  (tailscale 100.68.102.5:18000)
- *    noted          : 2026-06-26
+ *    noted          : 2026-09-15
  *  To compare after an update:  docker pull the repo digest above (or look at
  *  the new /assets/index.*.{js,css}) and check which classes/elements changed.
+ *
+ *  CHANGELOG vs the v0.5.10 build (2026-03-28) this skin previously targeted:
+ *    - v0.5.12 replaced the big .top-banner with a compact masthead that has its
+ *      own square logo (a.nav-logo, background-image: var(--banner)). Hidden below,
+ *      otherwise it sits next to the injected YouTube logo.
+ *    - .nav-items now wraps its links in .nav-item-group divs (display:flex, a ROW).
+ *      Flattened with display:contents so the fixed sidebar stays a vertical list.
+ *    - Everything else verified unchanged: all CSS custom props, .multi-search-box,
+ *      .comment-box, the "<date> | <duration>" card meta span, the masthead still
+ *      being its own .boxed-content, and every other selector used here.
  * --------------------------------------------------------------------------
  */
 
@@ -187,10 +199,16 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
 ::-webkit-scrollbar-thumb { background: ${t.scrollThumb} !important; border-radius: 10px; border: 3px solid ${t.bg}; }
 ::-webkit-scrollbar-track { background: transparent; }
 
-/* ---- 3. Hide TA's big banner; the masthead replaces it ---- */
+/* ---- 3. Hide TA's own branding; the masthead replaces it ----
+   .top-banner: the big banner from <= v0.5.10 (gone in v0.5.12, kept as a harmless no-op).
+   .nav-logo:   v0.5.12's compact square logo (a.nav-logo, background-image: var(--banner)),
+                which would otherwise sit right next to the injected YouTube logo. */
 .top-banner { display: none !important; }
+.nav-logo { display: none !important; }
 
 /* ---- 4. MASTHEAD (restyle .top-nav into a sticky 56px bar) ---- */
+/* v0.5.12 makes .top-nav a CSS grid ("logo text icons"); forcing flex here disables the
+   grid-area placement on its children, which is exactly what we want. */
 .top-nav {
   display: flex !important;
   align-items: center;
@@ -272,6 +290,10 @@ html { scrollbar-color: ${t.scrollThumb} transparent !important; }
   border-right: 1px solid ${t.border} !important;   /* greyish divider when the sidebar is shown */
   transition: transform .15s ease;
 }
+/* v0.5.12 wraps the links in .nav-item-group divs, each display:flex (i.e. a ROW). Without
+   this the vertical sidebar renders as two horizontal rows. display:contents removes the
+   wrapper boxes so the <a> items become direct flex children of the column again. */
+.nav-items .nav-item-group { display: contents !important; }
 .nav-item {
   display: flex !important; align-items: center; gap: 24px;
   font-size: 14px !important; line-height: 1; text-transform: capitalize;
@@ -991,7 +1013,7 @@ body.yt-force-grid .grid-count { display: none !important; }
       decorateComments();
       enhanceViewControls();
       tagSubscribe();
-    decorateActionButtons();
+      decorateActionButtons();
     });
   });
   if (document.documentElement) {
