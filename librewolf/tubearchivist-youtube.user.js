@@ -8,6 +8,7 @@
 // @match        http://192.168.1.24:18000/
 // @match        http://localhost:18000/*
 // @match        http://127.0.0.1:18000/*
+// @match        https://*.ts.net:8443/*
 // @icon         https://www.youtube.com/favicon.ico
 // @run-at       document-start
 // @grant        GM_setValue
@@ -68,7 +69,7 @@
   // Tampermonkey's @match can match loosely on the host (ignoring the port) in some
   // setups, which let this skin leak onto other services on the same IP (e.g. Jellyfin
   // on :8096). TA is served on :18000, so bail if a different port is present.
-  if (location.port && location.port !== '18000') return;
+  if (location.port && !['18000', '8443'].includes(location.port)) return;
 
   /* ======================= CONFIG ======================= */
   const CFG = {
@@ -1020,3 +1021,4 @@ body.yt-force-grid .grid-count { display: none !important; }
     mo.observe(document.documentElement, { childList: true, subtree: true });
   }
 })();
+
