@@ -48,7 +48,7 @@ hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("hyprctl reload"))
 hl.bind("ALT + space", hl.dsp.exec_cmd(menu))
 hl.bind("ALT + c", hl.dsp.exec_cmd([[rofi -show calc -modi calc -no-show-match -no-sort -no-history -theme ~/.config/rofi/calc.rasi -calc-command "echo -n '{result}' | wl-copy"]]))
 
-hl.bind("ALT + Tab", hl.dsp.focus({ last = true }))
+hl.bind("ALT + Tab", hl.dsp.exec_cmd("~/.config/hypr/scripts/focus-last.sh"))
 
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "l" }))
 hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "r" }))
