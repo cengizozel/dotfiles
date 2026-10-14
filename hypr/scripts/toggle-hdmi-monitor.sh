@@ -3,7 +3,7 @@
 # Geometry must match ~/.config/hypr/monitors.lua.
 
 MON="HDMI-A-1"
-CFG="1024x768@85.0,0x672,1.0"
+CFG="1024x768@85.0,-1024x672,1.0"
 STATE="$HOME/.config/hypr/hdmi-monitor.state"
 
 if hyprctl monitors | grep -q "^Monitor $MON"; then
