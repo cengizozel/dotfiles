@@ -2,15 +2,6 @@
 
 ![Desktop screenshot](screenshot.png)
 
-## Setup
-
-There is no bootstrap script. Clone the repo and copy each config into the
-location shown below, then install the matching packages.
-
-```bash
-git clone https://github.com/cengizozel/dotfiles.git
-```
-
 ## Configs
 
 | Path | Installs to |
