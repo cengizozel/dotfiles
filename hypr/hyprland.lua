@@ -22,6 +22,9 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("kitty", { workspace = "5" })
     hl.exec_cmd([[sleep 1 && hyprctl dispatch 'hl.dsp.focus({ window = "class:kitty" })']])
     hl.exec_cmd("mkdir -p ~/Pictures/Screenshots")
+    -- mirror clipboard images into the X selection for xclip over ssh -X;
+    -- the script explains why it has to guard against Hyprland's mirror-back
+    hl.exec_cmd("wl-paste --type image/png --watch ~/.config/hypr/scripts/clipboard-to-xclip.sh")
 end)
 
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
@@ -136,6 +139,9 @@ hl.window_rule({ match = { class = "^anytype$" }, workspace = "9 silent" })
 -- Screen share picker (xdg-desktop-portal-hyprland) must appear on the current
 -- workspace, floating, or it opens as a tile elsewhere and capture waits forever.
 hl.window_rule({ match = { class = "^hyprland-share-picker$" }, float = true, center = true })
+-- FL Studio runs inside a Wine virtual desktop (its launcher sets the size to
+-- match a full tile here); keep that window on workspace 4.
+hl.window_rule({ match = { title = "^FL - Wine [Dd]esktop$" }, workspace = "4 silent" })
 
 hl.bind("mouse:272", hl.dsp.exec_cmd("~/.local/bin/rofi-click-away"), { non_consuming = true })
 hl.bind("mouse:273", hl.dsp.exec_cmd("~/.local/bin/rofi-click-away"), { non_consuming = true })
