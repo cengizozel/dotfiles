@@ -92,10 +92,10 @@ end
 hl.bind(mainMod .. " + SHIFT + comma", hl.dsp.workspace.move({ monitor = "+1" }))
 
 -- Screenshots
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd([[sh -c 'REGION=$(slurp) || exit; grim -g "$REGION" - | wl-copy && notify-send "Screenshot copied" -t 1000']]))
-hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd([[grim - | wl-copy && notify-send "Screenshot copied" -t 1000]]))
-hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd([[sh -c 'REGION=$(slurp) || exit; grim -g "$REGION" ~/Pictures/Screenshots/Screenshot-$(date +%F_%T).png && notify-send "Screenshot saved" -t 1000']]))
-hl.bind(mainMod .. " + G", hl.dsp.exec_cmd([[sh -c 'grim ~/Pictures/Screenshots/Screenshot-$(date +%F_%T).png && notify-send "Screenshot saved" -t 1000']]))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd([[sh -c 'REGION=$(slurp) || exit; grim -g "$REGION" - | wl-copy && notify-send -e -a screenshot -t 1000 "󰄀  Screenshot copied"']]))
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd([[grim - | wl-copy && notify-send -e -a screenshot -t 1000 "󰄀  Screenshot copied"]]))
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd([[sh -c 'REGION=$(slurp) || exit; grim -g "$REGION" ~/Pictures/Screenshots/Screenshot-$(date +%F_%T).png && notify-send -e -a screenshot -t 1000 "󰄀  Screenshot saved"']]))
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd([[sh -c 'grim ~/Pictures/Screenshots/Screenshot-$(date +%F_%T).png && notify-send -e -a screenshot -t 1000 "󰄀  Screenshot saved"']]))
 
 -- Clear all notifications and close the panel if open
 hl.bind(mainMod .. " + BackSpace", hl.dsp.exec_cmd("swaync-client -C -cp"))
