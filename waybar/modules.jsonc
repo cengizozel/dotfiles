@@ -27,17 +27,17 @@
     "custom/volume": {
         "exec": "python3 ~/.config/waybar/scripts/volume.py",
         "return-type": "json",
-        "interval": 1,
+        "interval": 5,
         "signal": 8,
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && touch /tmp/waybar-vol-changed && kill -SIGRTMIN+8 $(pidof waybar)",
-        "on-click-right": "hyprctl dispatch exec -- pavucontrol -t 4"
+        "on-click-right": "hyprctl dispatch 'hl.dsp.exec_cmd(\"pavucontrol -t 4\")'"
     },
 
     "pulseaudio/slider": {
         "min": 0,
         "max": 100,
         "cursor": true,
-        "on-click-right": "hyprctl dispatch exec -- pavucontrol -t 4"
+        "on-click-right": "hyprctl dispatch 'hl.dsp.exec_cmd(\"pavucontrol -t 4\")'"
     },
 
     "custom/visualizer": {
@@ -51,8 +51,9 @@
     "custom/network": {
         "exec": "python3 ~/.config/waybar/scripts/network.py",
         "interval": 2,
+        "signal": 10,
         "return-type": "json",
-        "on-click": "sh -c 'if [ \"$(cat /tmp/waybar-net-mode 2>/dev/null)\" = \"both\" ]; then echo down > /tmp/waybar-net-mode; else echo both > /tmp/waybar-net-mode; fi'"
+        "on-click": "sh -c 'if [ \"$(cat /tmp/waybar-net-mode 2>/dev/null)\" = \"both\" ]; then echo down > /tmp/waybar-net-mode; else echo both > /tmp/waybar-net-mode; fi; kill -SIGRTMIN+10 $(pidof waybar)'"
     },
 
     "custom/clock": {

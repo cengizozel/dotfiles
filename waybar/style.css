@@ -19,21 +19,17 @@
 
 /* Standard pill, all modules share the same base */
 #nav,
-#mpris,
 #custom-network,
 #custom-notification,
 #custom-clock,
 #group-volume,
-#tray,
-#clock {
+#tray {
     background: @module-bg;
     border-radius: 15px;
     padding: 4px 14px;
     margin: 0 4px;
 }
 
-#group-volume   { padding: 4px 14px; }
-#pulseaudio,
 #custom-volume.icon   { font-size: 17px; }
 #custom-volume.percent { font-size: 14px; }
 
@@ -84,12 +80,6 @@
     background: rgba(255, 255, 255, 0.05);
     box-shadow: none;
 }
-
-/* Launcher */
-#custom-start { color: @blue; margin-right: 10px; }
-
-/* States */
-#mpris.paused { color: @inactive; }
 
 /* Volume slider */
 #pulseaudio-slider { margin-left: 6px; }
