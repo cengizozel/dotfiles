@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
-import subprocess, os, time, json
+# Event-driven volume module. Listens to pactl for sink changes and prints a
+# new line on each one: the percent right after a change, the icon again a
+# moment later. No polling, so slider scrolls and pavucontrol edits show up too.
+import json
+import re
+import subprocess
+import threading
 
-STATE_FILE = '/tmp/waybar-vol-changed'
 ICONS = ['󰕿', '󰖀', '󰕾']
 MUTED_ICON = '󰝟'
+PERCENT_FOR = 1.5  # seconds to show the number after a change
+EVENT = re.compile(r"Event 'change' on (sink|server) #")
 
 def get_state():
     # wpctl prints e.g. "Volume: 0.68" or "Volume: 0.68 [MUTED]"
@@ -17,16 +24,29 @@ def get_state():
             continue
     return vol, 'MUTED' in r.stdout
 
-vol, muted = get_state()
+def emit(show_percent):
+    vol, muted = get_state()
+    if muted:
+        text, cls = MUTED_ICON, 'icon'
+    elif show_percent:
+        text, cls = f'{vol}%', 'percent'
+    else:
+        text, cls = (ICONS[0] if vol == 0 else ICONS[1] if vol < 50 else ICONS[2]), 'icon'
+    print(json.dumps({'text': text, 'tooltip': f'{vol}%', 'class': cls}), flush=True)
 
-recently_changed = os.path.exists(STATE_FILE) and (time.time() - os.path.getmtime(STATE_FILE)) < 1.5
+timer = None
 
-if muted:
-    text = MUTED_ICON
-elif recently_changed:
-    text = f'{vol}%'
-else:
-    text = ICONS[0] if vol == 0 else ICONS[1] if vol < 50 else ICONS[2]
+def on_change():
+    global timer
+    emit(True)
+    if timer:
+        timer.cancel()
+    timer = threading.Timer(PERCENT_FOR, emit, args=(False,))
+    timer.daemon = True
+    timer.start()
 
-cls = 'percent' if (not muted and recently_changed) else 'icon'
-print(json.dumps({'text': text, 'tooltip': f'{vol}%', 'class': cls}))
+emit(False)
+with subprocess.Popen(['pactl', 'subscribe'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True) as p:
+    for line in p.stdout:
+        if EVENT.search(line):
+            on_change()

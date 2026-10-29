@@ -27,9 +27,8 @@
     "custom/volume": {
         "exec": "python3 ~/.config/waybar/scripts/volume.py",
         "return-type": "json",
-        "interval": 5,
-        "signal": 8,
-        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && touch /tmp/waybar-vol-changed && kill -SIGRTMIN+8 $(pidof waybar)",
+        "restart-interval": 1,
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "on-click-right": "hyprctl dispatch 'hl.dsp.exec_cmd(\"pavucontrol -t 4\")'"
     },
 
